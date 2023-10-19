@@ -14,6 +14,8 @@ public class Venue {
     @Id
     private Long venueId;
 
+    private String venueName;
+
     private String venueAddress;
 
     private int seatMaxRow;

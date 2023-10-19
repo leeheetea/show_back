@@ -15,6 +15,8 @@ public class ShowBanner {
 
     private String bannerUrl;
 
+    private String smallBannerUrl;
+
     @ManyToOne
     @JoinColumn(name = "show_id")
     private Show show;
