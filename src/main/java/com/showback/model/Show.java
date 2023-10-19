@@ -38,12 +38,12 @@ public class Show {
     @OneToMany(mappedBy = "show")
     private List<Reservation> reservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
     private List<ShowSchedule> showSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
     private List<ShowBanner> showBanners = new ArrayList<>();
 }

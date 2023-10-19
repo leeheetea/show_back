@@ -1,6 +1,5 @@
 package com.showback.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
