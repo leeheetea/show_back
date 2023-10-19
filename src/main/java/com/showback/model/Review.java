@@ -15,9 +15,9 @@ public class Review {
 
     private int reviewGrade;
 
-    private String reviewImgUrl;
-
     private String reviewText;
+
+    private String reviewImgUrl;
 
     @ManyToOne
     @JoinColumn(name = "show_id")
