@@ -14,6 +14,8 @@ public class Password {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long passwordId;
 
+    private String password;
+
     private String salt;
 
     private Date updateDate;

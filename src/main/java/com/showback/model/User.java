@@ -1,5 +1,6 @@
 package com.showback.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,11 +10,14 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Data
+@Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
+    private String username;
 
     private int loginType;
 
