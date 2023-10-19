@@ -1,13 +1,16 @@
 package com.showback.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "shows_schedule")
-@Data
+@Getter
+@Setter
 public class ShowSchedule {
 
     @Id

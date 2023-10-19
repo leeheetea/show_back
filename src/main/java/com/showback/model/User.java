@@ -1,6 +1,8 @@
 package com.showback.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -9,7 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 public class User {
 
     @Id
