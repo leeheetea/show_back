@@ -15,6 +15,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    private String userName;
+
     private int loginType;
 
     @OneToMany(mappedBy = "user")
@@ -28,4 +30,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<UserAgreement> userAgreements = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private UserAuth userAuth;
 }

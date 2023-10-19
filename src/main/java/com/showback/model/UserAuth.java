@@ -37,4 +37,8 @@ public class UserAuth {
     @OneToMany(mappedBy = "userAuth", cascade = CascadeType.ALL)
     private List<Notice> noticeList;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }
