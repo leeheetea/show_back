@@ -1,12 +1,14 @@
 package com.showback.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "reservations")
 public class Reservation {
 
@@ -16,6 +18,16 @@ public class Reservation {
     private Date reservationDate;
 
     private String reservationState;
+
+    private String reservationShowName;
+
+    private Date reservationShowDate;
+
+    private String reservationShowVenue;
+
+    private String reservationPrice;
+
+    private int reservationTicketAmount;
 
     @ManyToOne
     @JoinColumn(name = "order_id")

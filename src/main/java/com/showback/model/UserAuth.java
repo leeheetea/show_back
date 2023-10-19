@@ -2,6 +2,8 @@ package com.showback.model;
 
 import com.showback.model.Order;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -9,7 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "users_auth")
-@Data
+@Getter
+@Setter
 public class UserAuth {
 
     @Id
@@ -36,5 +39,9 @@ public class UserAuth {
 
     @OneToMany(mappedBy = "userAuth", cascade = CascadeType.ALL)
     private List<Notice> noticeList;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
