@@ -29,4 +29,6 @@ public class UserController {
         userService.register(userDTO);
         return new ResponseEntity<>("registered", HttpStatus.CREATED);
     }
+
+
 }

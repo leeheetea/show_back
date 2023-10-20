@@ -10,6 +10,7 @@ import com.showback.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,7 @@ public class UserService {
 
         Password passwordEntity = new Password();
         passwordEntity.setUser(userEntity);
-        passwordEntity.setPassword(userDTO.getPassword());
+        passwordEntity.setUserPassword(userDTO.getPassword());
         passwordRepository.save(passwordEntity);
 
         UserAuth userAuthEntity = new UserAuth();
@@ -41,7 +42,19 @@ public class UserService {
         userAuthEntity.setAuthName(userDTO.getName());
         userAuthEntity.setAuthEmail(userDTO.getEmail());
         userAuthEntity.setAuthPhone(userDTO.getPhone());
+        userAuthEntity.setSmsChoice(userDTO.isSmscheck());
+        userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
         userAuthRepository.save(userAuthEntity);
     }
+
+    public void login(final String username, final String password, final PasswordEncoder passwordEncoder){
+        final User loginUser = userRepository.findByUsername(username);
+        final Password loginPassword = passwordRepository.findPasswordByUsername(username);
+
+        if(loginUser != null && passwordEncoder.matches(password, loginPassword.getUserPassword())) {
+
+        }
+    }
+
 
 }

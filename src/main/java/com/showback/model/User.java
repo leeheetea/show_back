@@ -2,8 +2,9 @@ package com.showback.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,9 +12,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -35,4 +37,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<UserAgreement> userAgreements = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private UserAuth userAuth;
+
 }
