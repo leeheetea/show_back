@@ -28,6 +28,10 @@ public class UserAuth {
 
     private Date authDate;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "userAuth", cascade = CascadeType.ALL)
     private List<Order> orderList;
 

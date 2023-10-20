@@ -1,5 +1,6 @@
 package com.showback.service;
 
+import com.showback.DTO.UserDTO;
 import com.showback.model.Password;
 import com.showback.model.User;
 import com.showback.model.UserAuth;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -22,35 +24,24 @@ public class UserService {
     @Autowired
     private UserAuthRepository userAuthRepository;
 
-    public User register(String username,
-                         String password,
-                         String name,
-                         String email,
-                         String smsChoice,
-                         String validatePeriod) {
+    @Transactional
+    public void register(UserDTO userDTO) {
 
-        User user = new User();
-        user.setUsername(username);
+        User userEntity = new User();
+        userEntity.setUsername(userDTO.getUsername());
+        userRepository.save(userEntity);
 
-        Password userPassword = new Password();
-        userPassword.setPassword(password);
+        Password passwordEntity = new Password();
+        passwordEntity.setUser(userEntity);
+        passwordEntity.setPassword(userDTO.getPassword());
+        passwordRepository.save(passwordEntity);
 
-        UserAuth userAuth = new UserAuth();
-        userAuth.setAuthName(name);
-        userAuth.setAuthName(email);
-        userAuth.setAuthName(smsChoice);
-        userAuth.setAuthName(validatePeriod);
-
-
-
-        user.setPassword(userPassword);
-        userPassword.setUser(user);
-
-        userRepository.save(user);
-        passwordRepository.save(password);
-        userAuthRepository.save(name);
-
-        return ;
+        UserAuth userAuthEntity = new UserAuth();
+        userAuthEntity.setUser(userEntity);
+        userAuthEntity.setAuthName(userDTO.getName());
+        userAuthEntity.setAuthEmail(userDTO.getEmail());
+        userAuthEntity.setAuthPhone(userDTO.getPhone());
+        userAuthRepository.save(userAuthEntity);
     }
 
 }

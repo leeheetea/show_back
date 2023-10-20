@@ -16,21 +16,22 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        DefaultSecurityFilterChain build = http.build();
+//        DefaultSecurityFilterChain build = http.build();
+        http.authorizeRequests().antMatchers("/**").permitAll().and().csrf().disable();
 
-        return build;
+        return http.build();
 
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .antMatchers("/favicon.ico", "/resources/**", "/error");
     }
