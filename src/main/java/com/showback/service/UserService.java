@@ -1,6 +1,5 @@
 package com.showback.service;
 
-import com.showback.DTO.UserDTO;
 import com.showback.model.Password;
 import com.showback.model.User;
 import com.showback.model.UserAuth;
@@ -9,7 +8,6 @@ import com.showback.repository.UserAuthRepository;
 import com.showback.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,36 +23,25 @@ public class UserService {
     @Autowired
     private UserAuthRepository userAuthRepository;
 
-    @Transactional
-    public void register(UserDTO userDTO) {
 
-        User userEntity = new User();
-        userEntity.setUsername(userDTO.getUsername());
+    public void register(User userEntity, Password passwordEntity, UserAuth userAuthEntity) {
         userRepository.save(userEntity);
-
-        Password passwordEntity = new Password();
-        passwordEntity.setUser(userEntity);
-        passwordEntity.setUserPassword(userDTO.getPassword());
         passwordRepository.save(passwordEntity);
-
-        UserAuth userAuthEntity = new UserAuth();
-        userAuthEntity.setUser(userEntity);
-        userAuthEntity.setAuthName(userDTO.getName());
-        userAuthEntity.setAuthEmail(userDTO.getEmail());
-        userAuthEntity.setAuthPhone(userDTO.getPhone());
-        userAuthEntity.setSmsChoice(userDTO.isSmscheck());
-        userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
         userAuthRepository.save(userAuthEntity);
+
+        // if need return
+        // 1. custom DTO
+        // 2. Entity List
     }
 
-    public void login(final String username, final String password, final PasswordEncoder passwordEncoder){
+    public User getByCredentials(final String username, final String password, final PasswordEncoder passwordEncoder){
         final User loginUser = userRepository.findByUsername(username);
-        final Password loginPassword = passwordRepository.findPasswordByUsername(username);
+        final Password loginPassword = passwordRepository.findByUser_UserId(loginUser.getUserId());
 
         if(loginUser != null && passwordEncoder.matches(password, loginPassword.getUserPassword())) {
-
+            return loginUser;
         }
+
+        return null;
     }
-
-
 }
