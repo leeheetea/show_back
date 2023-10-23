@@ -41,6 +41,9 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"		// java.lang.NoClassDefFoundError (javax.annotation.Generated) 발생 대응
 
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 
 }
 
