@@ -1,6 +1,6 @@
 package com.showback.controller;
 
-import com.showback.DTO.UserDTO;
+import com.showback.dto.UserDTO;
 import com.showback.model.User;
 import com.showback.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping("/user")
     public ResponseEntity<String> register(@RequestBody UserDTO userDTO){
         User user = User.builder()
-                .username(userDTO.getUsername())
+                .userName(userDTO.getUsername())
                 .build();
         return ResponseEntity.ok("User registered");
     }

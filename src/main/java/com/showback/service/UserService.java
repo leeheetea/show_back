@@ -22,7 +22,7 @@ public class UserService {
     @Autowired
     private UserAuthRepository userAuthRepository;
 
-    public User register(String username,
+    public User registerUser(String username,
                          String password,
                          String name,
                          String email,
@@ -30,10 +30,10 @@ public class UserService {
                          String validatePeriod) {
 
         User user = new User();
-        user.setUsername(username);
+        user.setUserName(username);
 
         Password userPassword = new Password();
-        userPassword.setPassword(password);
+        userPassword.setUserPassword(password);
 
         UserAuth userAuth = new UserAuth();
         userAuth.setAuthName(name);
@@ -41,16 +41,14 @@ public class UserService {
         userAuth.setAuthName(smsChoice);
         userAuth.setAuthName(validatePeriod);
 
-
-
         user.setPassword(userPassword);
         userPassword.setUser(user);
 
         userRepository.save(user);
-        passwordRepository.save(password);
-        userAuthRepository.save(name);
+        passwordRepository.save(userPassword);
+        userAuthRepository.save(userAuth);
 
-        return ;
+        return user;
     }
 
 }
