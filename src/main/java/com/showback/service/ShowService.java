@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
 public class ShowService {
 
     private final ShowRepository showRepository;
-    private final ShowScheduleRepository showScheduleRepository;
-    private final ShowBannerRepository showBannerRepository;
     private final VenueRepository venueRepository;
 
     private final ShowMapper showMapper;
@@ -43,25 +41,17 @@ public class ShowService {
     private final ObjectMapper objectMapper;
 
 
-
-
-    private List<ShowScheduleDTO> convertToScheduleDTOs(List<ShowSchedule> schedules) {
-        return schedules.stream().map(showScheduleMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    private List<ShowBannerDTO> convertToBannerDTOs(List<ShowBanner> banners) {
-        return banners.stream().map(showBannerMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public ShowDTO findShowDTOById(Long showId) throws JsonProcessingException {
         Show foundShow = showRepository.findById(showId)
                 .orElseThrow(() -> new ShowNotFoundException(showId));
 
-        List<ShowScheduleDTO> showScheduleDTOs = convertToScheduleDTOs(foundShow.getShowSchedules());
-        List<ShowBannerDTO> showBannerDTOs = convertToBannerDTOs(foundShow.getShowBanners());
+        List<ShowScheduleDTO> showScheduleDTOs = foundShow.getShowSchedules().stream()
+                .map(showScheduleMapper::toDTO)
+                .collect(Collectors.toList());
+        List<ShowBannerDTO> showBannerDTOs = foundShow.getShowBanners().stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
 
         List<String> contentDetail = objectMapper
                 .readValue(foundShow.getContentDetail(), new TypeReference<List<String>>() {
@@ -89,25 +79,44 @@ public class ShowService {
         }
 
         Show show = showMapper.toEntity(showDTO, venue);
+
         return showRepository.save(show);
     }
 
-//    @Transactional
-//    public ShowSchedule createShowSchedule(Long showId, ShowSchedule showSchedule){
-//        Show show = showRepository.findById(showId)
-//                .orElseThrow(() -> new ShowNotFoundException(showId));
-//
-//        showSchedule.setShow(show);
-//        return showScheduleRepository.save(showSchedule);
-//    }
-//
-//    @Transactional
-//    public ShowBanner createShowBanner(Long showId, ShowBanner showBanner){
-//        Show show = showRepository.findById(showId)
-//                .orElseThrow(() -> new ShowNotFoundException(showId));
-//
-//        showBanner.setShow(show);
-//        return showBannerRepository.save(showBanner);
-//    }
-//
+    @Transactional
+    public Long updateShow(ShowDTO showDTO) throws JsonProcessingException{
+        Show show = showRepository.findById(showDTO.getShowId())
+                .orElseThrow(() -> new ShowNotFoundException(showDTO.getShowId()));
+
+        show.setTitle(showDTO.getTitle());
+        show.setType(showDTO.getType());
+
+        String contentDetail = objectMapper.writeValueAsString(showDTO.getContentDetail());
+        show.setContentDetail(contentDetail);
+        show.setThumbnailUrl(showDTO.getThumbnailUrl());
+        show.setPrice(showDTO.getPrice());
+
+        if(showDTO.getVenueId() != null){
+            Venue venue = venueRepository.findById(showDTO.getVenueId()).orElseThrow(EntityNotFoundException::new);
+            show.setVenue(venue);
+        }
+
+        if(showDTO.getShowSchedules() != null){
+
+            List<ShowSchedule> scheduleList = showDTO.getShowSchedules().stream()
+                    .map(showScheduleMapper::toEntity)
+                    .collect(Collectors.toList());
+            show.setShowSchedules(scheduleList);
+        }
+
+        if(showDTO.getShowBanners() != null){
+            List<ShowBanner> showBanners = showDTO.getShowBanners().stream()
+                    .map(showBannerMapper::toEntity)
+                    .collect(Collectors.toList());
+            show.setShowBanners(showBanners);
+        }
+
+        return show.getShowId();
+    }
+
 }

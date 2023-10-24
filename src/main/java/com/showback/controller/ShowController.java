@@ -26,6 +26,7 @@ public class ShowController {
         }
 
         Show show = showService.createShow(showDTO);
+
         return ResponseEntity.ok().body(show);
     }
 
@@ -39,8 +40,8 @@ public class ShowController {
     }
 
     @PostMapping("/{showId}")
-    public ResponseEntity<?> updateShow(@RequestBody ShowDTO dto){
-        //업데이트
+    public ResponseEntity<?> updateShow(@RequestBody ShowDTO showDTO){
+
         return null;
     }
 

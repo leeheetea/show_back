@@ -41,7 +41,7 @@ public class ShowMapper {
             show.setVenue(venue);
         }
 
-        // ShowScheduleDTO 목록을 ShowSchedule 엔터티 목록으로 변환
+        // ShowSchedule과 연관관계 매핑
         if (showDTO.getShowSchedules() != null) {
 
             List<ShowSchedule> schedules = showDTO.getShowSchedules().stream()
@@ -51,7 +51,7 @@ public class ShowMapper {
             show.setShowSchedules(schedules);
         }
 
-        // ShowBannerDTO 목록을 ShowBanner 엔터티 목록으로 변환
+        // ShowBanner와 연관관계 매핑
         if (showDTO.getShowBanners() != null) {
             List<ShowBanner> showBanners = showDTO.getShowBanners().stream()
                     .map(showBannerMapper::toEntity)

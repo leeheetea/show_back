@@ -18,7 +18,6 @@ public class ShowBannerMapper {
         if (dto == null) {
             return null;
         }
-
         ShowBanner showBanner = new ShowBanner();
         showBanner.setShowBannerId(dto.getShowBannerId());
         showBanner.setBannerUrl(dto.getBannerUrl());
@@ -33,12 +32,10 @@ public class ShowBannerMapper {
         return showBanner;
     }
 
-
     public ShowBannerDTO toDTO(ShowBanner showBanner) {
         if (showBanner == null) {
             return null;
         }
-
         ShowBannerDTO dto = new ShowBannerDTO();
         dto.setShowBannerId(showBanner.getShowBannerId());
         dto.setBannerUrl(showBanner.getBannerUrl());
@@ -46,7 +43,6 @@ public class ShowBannerMapper {
         if (showBanner.getShow() != null) {
             dto.setShowId(showBanner.getShow().getShowId());
         }
-
         return dto;
     }
 
