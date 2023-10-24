@@ -1,5 +1,6 @@
 package com.showback.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,10 +12,11 @@ import javax.mail.internet.MimeMessage;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService{
 
-    @Autowired
-    JavaMailSender javaMailSender;
+
+    private final JavaMailSender javaMailSender;
 
     private MimeMessage createMessage(String to, String ePw)throws Exception{
         System.out.println("보내는 대상 = " + to);

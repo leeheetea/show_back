@@ -1,4 +1,4 @@
-package com.showback.DTO;
+package com.showback.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
