@@ -1,5 +1,6 @@
 package com.showback.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,5 +40,6 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "show_id")
+    @JsonBackReference
     private Show show;
 }

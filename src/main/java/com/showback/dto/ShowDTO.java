@@ -1,10 +1,16 @@
 package com.showback.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShowDTO {
 
     private Long showId;
@@ -13,13 +19,13 @@ public class ShowDTO {
 
     private String type;
 
-    private String contentDetail;
+    private List<String> contentDetail;
 
     private String thumbnailUrl;
 
     private int price;
 
-    private VenueDTO venue;
+    private Long venueId;
 
     private List<ShowScheduleDTO> showSchedules;
 

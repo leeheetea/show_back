@@ -1,5 +1,6 @@
 package com.showback.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,5 +30,6 @@ public class Venue {
     private List<Seat> seats = new ArrayList<>();
 
     @OneToMany(mappedBy = "venue")
+    @JsonBackReference
     private List<Show> shows = new ArrayList<>();
 }
