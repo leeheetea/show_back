@@ -40,10 +40,9 @@ public class ShowController {
     }
 
     @PostMapping("/{showId}")
-    public ResponseEntity<?> updateShow(@RequestBody ShowDTO showDTO){
+    public ResponseEntity<?> updateShow(@RequestBody ShowDTO showDTO) throws JsonProcessingException {
 
-        return null;
+        Long showId = showService.updateShow(showDTO);
+        return ResponseEntity.ok().body(showId);
     }
-
-
 }

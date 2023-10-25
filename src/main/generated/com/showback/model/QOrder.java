@@ -30,7 +30,7 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final StringPath orderState = createString("orderState");
 
-    public final ListPath<Reservation, QReservation> reservations = this.<Reservation, QReservation>createList("reservations", Reservation.class, QReservation.class, PathInits.DIRECT2);
+    public final QReservation reservation;
 
     public final NumberPath<Integer> ticketAmount = createNumber("ticketAmount", Integer.class);
 
@@ -54,6 +54,7 @@ public class QOrder extends EntityPathBase<Order> {
 
     public QOrder(Class<? extends Order> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.reservation = inits.isInitialized("reservation") ? new QReservation(forProperty("reservation"), inits.get("reservation")) : null;
         this.userAuth = inits.isInitialized("userAuth") ? new QUserAuth(forProperty("userAuth"), inits.get("userAuth")) : null;
     }
 

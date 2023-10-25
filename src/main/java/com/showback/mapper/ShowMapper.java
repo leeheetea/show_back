@@ -34,6 +34,7 @@ public class ShowMapper {
         show.setType(showDTO.getType());
         show.setContentDetail(contentDetailJson);
         show.setThumbnailUrl(showDTO.getThumbnailUrl());
+        show.setPeriod(showDTO.getPeriod());
         show.setPrice(showDTO.getPrice());
 
         // VenueDTO를 Venue 엔터티로 변환
@@ -78,6 +79,7 @@ public class ShowMapper {
                 .contentDetail(contentDetail)
                 .thumbnailUrl(show.getThumbnailUrl())
                 .price(show.getPrice())
+                .period(show.getPeriod())
                 .venueId(show.getVenue().getVenueId())
                 .showSchedules(show.getShowSchedules().stream()
                         .map(showScheduleMapper::toDTO)

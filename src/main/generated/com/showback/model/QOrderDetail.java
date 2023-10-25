@@ -28,7 +28,7 @@ public class QOrderDetail extends EntityPathBase<OrderDetail> {
 
     public final NumberPath<Long> orderDetailId = createNumber("orderDetailId", Long.class);
 
-    public final QSeat seat;
+    public final QShowSeat showSeat;
 
     public QOrderDetail(String variable) {
         this(OrderDetail.class, forVariable(variable), INITS);
@@ -49,7 +49,7 @@ public class QOrderDetail extends EntityPathBase<OrderDetail> {
     public QOrderDetail(Class<? extends OrderDetail> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
-        this.seat = inits.isInitialized("seat") ? new QSeat(forProperty("seat"), inits.get("seat")) : null;
+        this.showSeat = inits.isInitialized("showSeat") ? new QShowSeat(forProperty("showSeat"), inits.get("showSeat")) : null;
     }
 
 }

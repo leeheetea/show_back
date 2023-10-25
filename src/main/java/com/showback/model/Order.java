@@ -1,6 +1,5 @@
 package com.showback.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,6 +31,6 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order")
-    private List<Reservation> reservations = new ArrayList<>();
+    @OneToOne(mappedBy = "order")
+    private Reservation reservation;
 }

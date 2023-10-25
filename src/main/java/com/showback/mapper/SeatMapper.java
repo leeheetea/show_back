@@ -29,20 +29,6 @@ public class SeatMapper {
             dto.setVenueId(seat.getVenue().getVenueId());
         }
 
-        if (seat.getOrderDetails() != null) {
-            dto.setOrderDetailIds(
-                    seat.getOrderDetails().stream()
-                            .map(OrderDetail::getOrderDetailId)
-                            .collect(Collectors.toList()));
-        }
-
-        if (seat.getReservations() != null) {
-            dto.setReservationIds(
-                    seat.getReservations().stream()
-                            .map(Reservation::getReservationId)
-                            .collect(Collectors.toList()));
-        }
-
         if (seat.getShowSeats() != null) {
             dto.setShowSeatIds(
                     seat.getShowSeats().stream()
@@ -62,7 +48,6 @@ public class SeatMapper {
         seat.setSeatId(dto.getSeatId());
         seat.setSeatRow(dto.getSeatRow());
         seat.setSeatColumn(dto.getSeatColumn());
-
 
         if (dto.getVenueId() != null) {
             Venue venue = venueRepository.findById(dto.getVenueId()).orElseThrow(EntityNotFoundException::new);

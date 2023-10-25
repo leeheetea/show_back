@@ -26,6 +26,8 @@ public class Show {
 
     private String thumbnailUrl;
 
+    private String period;
+
     private int price;
 
     @ManyToOne
