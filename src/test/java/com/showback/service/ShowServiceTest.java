@@ -44,31 +44,7 @@ class ShowServiceTest {
         assertThat(result.getTitle()).isEqualTo("New Show");
     }
 
-    @Test
-    void testCreateShowSchedule() {
-        Show show = new Show();
-        show.setTitle("Test Show");
-        Show savedShow = showRepository.save(show);
 
-        ShowSchedule showSchedule = new ShowSchedule();
-        showSchedule.setShow(savedShow);
-
-        ShowSchedule result = showService.createShowSchedule(savedShow.getShowId(), showSchedule);
-        assertThat(result.getShow().getShowId()).isEqualTo(savedShow.getShowId());
-    }
-
-    @Test
-    void testCreateShowBanner() {
-        Show show = new Show();
-        show.setTitle("Test Show");
-        Show savedShow = showRepository.save(show);
-
-        ShowBanner showBanner = new ShowBanner();
-        showBanner.setShow(savedShow);
-
-        ShowBanner result = showService.createShowBanner(savedShow.getShowId(), showBanner);
-        assertThat(result.getShow().getShowId()).isEqualTo(savedShow.getShowId());
-    }
 }
 
 

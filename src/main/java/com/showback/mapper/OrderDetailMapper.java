@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class OrderDetailMapper {
 
     private final OrderRepository orderRepository;
-    private final SeatRepository seatRepository;
     private final ShowSeatMapper showSeatMapper;
 
     public OrderDetail toEntity(OrderDetailDTO orderDetailDTO){
