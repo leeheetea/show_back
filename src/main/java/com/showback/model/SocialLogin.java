@@ -3,6 +3,7 @@ package com.showback.model;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,6 +24,7 @@ public class SocialLogin {
 
     private String accessToken;
 
+    @LastModifiedDate
     private Date socialUpdateDate;
 
     @OneToOne

@@ -24,6 +24,7 @@ public class UserService {
     private final PasswordRepository passwordRepository;
     private final UserAuthRepository userAuthRepository;
 
+    // join
     public void register(User userEntity, Password passwordEntity, UserAuth userAuthEntity) {
         userRepository.save(userEntity);
         passwordRepository.save(passwordEntity);
@@ -34,6 +35,7 @@ public class UserService {
         // 2. Entity List
     }
 
+    // login
     public User getByCredentials(final String username, final String password, final PasswordEncoder passwordEncoder){
         final User loginUser = userRepository.findByUsername(username);
         final Password loginPassword = passwordRepository.findByUser_UserId(loginUser.getUserId());
@@ -45,6 +47,7 @@ public class UserService {
         return null;
     }
 
+    // find id
     public UserDTO retrieveUsername(final String name, final String email) {
         final User findUsername = userRepository.findByUserAuth_AuthNameAndUserAuth_AuthEmail(name, email);
         final UserAuth userAuth = userAuthRepository.findByUser_UserId(findUsername.getUserId());
@@ -71,7 +74,7 @@ public class UserService {
 //
 //    }
 
-    // 비밀번호 수정
+    // pwd update
     @Transactional
     public Password updatePasswordByUsername(final String username, final String newPassword, PasswordEncoder passwordEncoder) {
         final Password passwordEntity = passwordRepository.findByUser_Username(username);
@@ -86,7 +89,7 @@ public class UserService {
         return null;
     }
 
-    // jwt에서 userId 추출해서 비밀번호 수정
+    // login jwt userId, pwd update
     public void updatePasswordByUserId(Long userId, String newPassword, PasswordEncoder passwordEncoder) {
         Password passwordEntity = passwordRepository.findByUser_UserId(userId);
 
@@ -95,6 +98,33 @@ public class UserService {
             passwordRepository.save(passwordEntity);
         }
     }
+
+    // login jwt userId, email update
+    public void updateEmailByUserId(Long userId, String newEmail) {
+        UserAuth userAuthEntity = userAuthRepository.findByUser_UserId(userId);
+
+        if(userAuthEntity != null) {
+            userAuthEntity.setAuthEmail(newEmail);
+            userAuthRepository.save(userAuthEntity);
+        }
+    }
+
+    // login jw userId, check password
+    public Password verifyPasswordBeforeUpdate(Long userId, String password, PasswordEncoder passwordEncoder) {
+        Password passwordEntity = passwordRepository.findByUser_UserId(userId);
+
+        if(passwordEntity != null && passwordEncoder.matches(password, passwordEntity.getUserPassword())){
+            return passwordEntity;
+        }
+
+        return null;
+    }
+
+
+    // login jwt userId, delete account
+//    public void deleteAccount(Long userId) {
+//
+//    }
 
 
 

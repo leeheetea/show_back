@@ -14,17 +14,18 @@ import java.util.Date;
 public class TokenProvider {
     private static final String SECRET_KEY = "FlRpX30pMqDbiAkmlfArbrmVkDD4RqISskGZmBFax5oGVxzXXWUzTR5JyskiHMIV9M1Oicegkpi46AdvrcX1E6CmTUBc6IFbTPiD";
 
-    public String create(User userEntity) {
+    public String create(User userEntity, String ipAddress, String userAgent) {
         Date expireyDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
 
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .setSubject(userEntity.getUserId().toString())
+                .claim("ipAddress", ipAddress)
+                .claim("userAgent", userAgent)
                 .setIssuer("showday")
                 .setIssuedAt(new Date())
                 .setExpiration(expireyDate)
                 .compact();
-
     }
 
     public String validateAndGetUserId (String token){

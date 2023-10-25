@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,11 +55,15 @@ public class UserController {
 
     // 로그인
     @PostMapping("/user/login")
-    public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> authenticate(HttpServletRequest request,@RequestBody UserDTO userDTO) {
         User userEntity = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
 
         if(userEntity != null) {
-            final String token = tokenProvider.create(userEntity);
+            String ipAddress =  request.getRemoteAddr();
+            String userAgent = request.getHeader("User-Agent");
+            String loginType;
+
+            final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
             final UserDTO responseUserDTO = UserDTO.builder()
                     .username(userDTO.getUsername())
                     .token(token)
@@ -130,5 +131,35 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
+    @PostMapping("/user/email/update")
+    public ResponseEntity<?> updateEmail(HttpServletRequest request, @RequestBody UserDTO userDTO){
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
+
+        if(userId != null) {
+            userService.updateEmailByUserId(userId, userDTO.getEmail());
+            return ResponseEntity.ok().body("email updated");
+        }
+
+        return ResponseEntity.badRequest().body("User not found");
+    }
+
+    @PostMapping("/user/password/authentication")
+    public ResponseEntity<?> passwordAuthentication(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
+
+        if(userId != null) {
+            Password vPassword = userService.verifyPasswordBeforeUpdate(userId, userDTO.getPassword(), passwordEncoder);
+            if (vPassword != null) {
+                return ResponseEntity.ok().body("Verified");
+            } else {
+                return ResponseEntity.badRequest().body("Incorrect Password");
+            }
+        }
+        return  ResponseEntity.badRequest().body("User not found");
+    }
 
 }
