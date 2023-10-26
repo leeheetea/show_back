@@ -6,19 +6,29 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.showback.dto.SocialLoginDTO;
+import com.showback.model.Password;
 import com.showback.model.SocialLogin;
+import com.showback.model.User;
+import com.showback.repository.SocialLoginRepository;
+import com.showback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Optional;
 
 
 @Service
@@ -26,10 +36,19 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final SocialLoginRepository socialLoginRepository;
+    private final UserRepository userRepository;
+
     String KAKAO_CLINET_ID = "98fb1054fadbc801e5b9337e8492549d";
     String KAKAO_REDIRECT_URI = "http://localhost:3000/user/oauth/kakao";
     String KAKAO_TOKEN_URI = "https://kauth.kakao.com/oauth/token";
     String KAKAO_CLIENT_SECRET = "Q3ZilYgFgGorxTFqcSds7r30RdTuaj5w";
+
+    // 사용자 정보가져오기
+    String KAKAO_USER_DATA = "https://kapi.kakao.com/v2/user/me";
+
+    // 로그아웃
+    String KAKAO_LOGOUT_URI = "https://kapi.kakao.com/v1/user/logout";
 
 
     public SocialLoginDTO  getKakaoAccessToken(String code) {
@@ -63,26 +82,43 @@ public class AuthService {
 //        return accessTokenResponse.getBody();
     }
 
-//    public ResponseEntity<?> kakaoLogin(String kakao) {
-//        Account account = getKakaoInfo(kakaoAccessToken);
-//
-//        LoginResponseDto loginResponseDto = new LoginResponseDto();
-//        loginResponseDto.setLoginSuccess(true);
-//        loginResponseDto.setAccount(account);
-//
-//        Account existOwner = accountRepository.findById(account.getId()).orElse(null);
-//        try {
-//            if (existOwner == null) {
-//                System.out.println("처음 로그인 하는 회원입니다.");
-//                accountRepository.save(account);
-//            }
-//            loginResponseDto.setLoginSuccess(true);
-//
-//            return ResponseEntity.ok().headers(headers).body(loginResponseDto);
-//
-//        } catch (Exception e) {
-//            loginResponseDto.setLoginSuccess(false);
-//            return ResponseEntity.badRequest().body(loginResponseDto);
-//        }
-//    }
+    public String socialLoginInfo(SocialLoginDTO socialLoginDTO) {
+        SocialLogin socialLogin = new SocialLogin();
+
+        socialLogin.setAccessToken(socialLoginDTO.getAccess_token());
+
+        String idToken = socialLoginDTO.getId_token();
+        String[] splitIdToken = idToken.split("\\.");
+        String payload = new String(Base64.getDecoder().decode(splitIdToken[1]));
+//        System.out.println("payload = " + payload);
+        JSONObject payloadJson = new JSONObject(payload);
+
+        SocialLogin existingSocialLogin = socialLoginRepository.findBySocialUserIdFromProvider(payloadJson.getString("email"));
+        if (existingSocialLogin != null) {
+            return existingSocialLogin.getSocialUserIdFromProvider();
+        }
+
+        User user = new User();
+        user.setUsername(payloadJson.getString("email"));
+        user.setLoginType(1);
+        userRepository.save(user);
+
+        socialLogin.setSocialCode(payloadJson.getString("iss"));
+        socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
+        socialLogin.setUser(user);
+        socialLoginRepository.save(socialLogin);
+
+        return payloadJson.getString("email");
+    }
+
+    public User getByCredentials(final String username){
+        final User loginUser = userRepository.findByUsername(username);
+
+        if(loginUser != null && loginUser.getLoginType() == 1) {
+            return loginUser;
+        }
+
+        return null;
+    }
+
 }
