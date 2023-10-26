@@ -30,4 +30,5 @@ public class ShowSeat {
 
     @OneToOne(mappedBy = "showSeat")
     private OrderDetail orderDetail;
+
 }

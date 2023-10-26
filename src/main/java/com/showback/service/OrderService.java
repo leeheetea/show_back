@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final UserAuthRepository userAuthRepository;
 
@@ -81,5 +80,4 @@ public class OrderService {
        }
        return order;
     }
-
 }
