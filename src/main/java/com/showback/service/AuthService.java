@@ -23,9 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
@@ -45,10 +47,12 @@ public class AuthService {
     String KAKAO_CLIENT_SECRET = "Q3ZilYgFgGorxTFqcSds7r30RdTuaj5w";
 
     // 사용자 정보가져오기
-    String KAKAO_USER_DATA = "https://kapi.kakao.com/v2/user/me";
+    String KAKAO_USER_DATA_URI = "https://kapi.kakao.com/v2/user/me";
 
     // 로그아웃
-    String KAKAO_LOGOUT_URI = "https://kapi.kakao.com/v1/user/logout";
+    String KAKAO_USER_LOGOUT_URI = "https://kapi.kakao.com/v1/user/logout";
+    String KAKAO_OAUTH_LOGOUT_URI = "https://kauth.kakao.com/oauth/logout";
+    String KAKAO_LOGOUT_REDIRECT_URI = "http://localhost:3000/user/oauth/kakao/logout";
 
 
     public SocialLoginDTO  getKakaoAccessToken(String code) {
@@ -95,6 +99,9 @@ public class AuthService {
 
         SocialLogin existingSocialLogin = socialLoginRepository.findBySocialUserIdFromProvider(payloadJson.getString("email"));
         if (existingSocialLogin != null) {
+            // token update
+            existingSocialLogin.setAccessToken(socialLoginDTO.getAccess_token());
+            socialLoginRepository.save(existingSocialLogin);
             return existingSocialLogin.getSocialUserIdFromProvider();
         }
 
@@ -119,6 +126,24 @@ public class AuthService {
         }
 
         return null;
+    }
+
+    public SocialLogin socialLogout(Long userId){
+        final SocialLogin socialLogin = socialLoginRepository.findByUser_UserId(userId);
+
+        if(socialLogin != null) {
+            return socialLogin;
+        }
+
+        return null;
+    }
+
+    //https://kauth.kakao.com/oauth/logout?client_id=98fb1054fadbc801e5b9337e8492549d&logout_redirect_uri=http://localhost:3000/user/oauth/kakao/logout
+    public URI initiateKakaoLogout() {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(KAKAO_OAUTH_LOGOUT_URI)
+                .queryParam("client_id", KAKAO_CLINET_ID)
+                .queryParam("logout_redirect_uri", KAKAO_LOGOUT_REDIRECT_URI);
+        return builder.build().toUri();
     }
 
 }
