@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class MailController {
 
     private final EmailServiceImpl emailService;
 
-    @PostMapping("/auth/email/verify")
+    @PostMapping("/email/verify")
     public ResponseEntity<?> emailConfirm(@RequestBody EmailDTO email) throws Exception{
         String code = emailService.sendSimpleMessage(email.getEmail());
         EmailDTO emailDTO = new EmailDTO();

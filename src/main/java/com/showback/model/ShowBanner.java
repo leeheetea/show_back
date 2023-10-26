@@ -1,6 +1,6 @@
 package com.showback.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +20,8 @@ public class ShowBanner {
 
     private String smallBannerUrl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "show_id")
+    @JsonBackReference
     private Show show;
 }

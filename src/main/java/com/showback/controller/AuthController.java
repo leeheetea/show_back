@@ -15,16 +15,17 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping("/")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
     private final TokenProvider tokenProvider;
 
-    // kakao token
-    @GetMapping("/user/oauth/kakao")
-    public ResponseEntity<?> kakaoToken(HttpServletRequest request){
+
+    // kakao
+    @GetMapping("/oauth/kakao")
+    public ResponseEntity<?> kakaoLogin(HttpServletRequest request){
 
         String code = request.getParameter("code");
 //        System.out.println("------------------------------------------code = " + code);
@@ -57,12 +58,12 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/user/oauth/kakao/logout")
-    public ResponseEntity<?> kakaoLogin(String accessToken) {
-
-
-        return null;
-    }
+//    @PostMapping("/user/oauth/kakao/logout")
+//    public ResponseEntity<?> kakaoLogin(String accessToken) {
+//
+//
+//        return null;
+//    }
 
 
 

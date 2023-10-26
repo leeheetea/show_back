@@ -1,18 +1,23 @@
 package com.showback.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "reservations")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reservation {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
 
     private Date reservationDate;
@@ -21,23 +26,18 @@ public class Reservation {
 
     private String reservationShowName;
 
-    private Date reservationShowDate;
-
     private String reservationShowVenue;
 
-    private String reservationPrice;
+    private int reservationPrice;
 
     private int reservationTicketAmount;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "seat_id")
-    private Seat seat;
-
-    @ManyToOne
     @JoinColumn(name = "show_id")
+    @JsonBackReference
     private Show show;
 }

@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @Slf4j
-@RequestMapping("/")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -26,7 +26,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 회원가입
-    @PostMapping("/user")
+    @PostMapping
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
 
         User userEntity = new User();
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     // 로그인
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public ResponseEntity<?> authenticate(HttpServletRequest request,@RequestBody UserDTO userDTO) {
         User userEntity = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
 
@@ -77,7 +77,7 @@ public class UserController {
     }
 
     // 아이디 찾기
-    @PostMapping("/user/username/retrieve")
+    @PostMapping("/username/retrieve")
     public ResponseEntity<?> retrieveUsername(@RequestBody UserDTO userDTO) {
         UserDTO responseUserDTO = userService.retrieveUsername(userDTO.getName(), userDTO.getEmail());
 
@@ -101,14 +101,14 @@ public class UserController {
 //        return  null;
 //    }
 
-    @PostMapping("/user/password/retrieve")
+    @PostMapping("/password/retrieve")
     public ResponseEntity<?> retrievePassword(@RequestBody UserDTO userDTO) {
         userService.updatePasswordByUsername(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
 
         return ResponseEntity.ok().body("password updated");
     }
 
-    @PostMapping("/user/password/reset")
+    @PostMapping("/password/reset")
     public ResponseEntity<?> resetPassword(
             HttpServletRequest request,
             @RequestBody UserDTO userDTO) {
@@ -131,7 +131,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    @PostMapping("/user/email/update")
+    @PostMapping("/email/update")
     public ResponseEntity<?> updateEmail(HttpServletRequest request, @RequestBody UserDTO userDTO){
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         String userIdStr = tokenProvider.validateAndGetUserId(token);
@@ -145,7 +145,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
-    @PostMapping("/user/password/authentication")
+    @PostMapping("/password/authentication")
     public ResponseEntity<?> passwordAuthentication(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         String userIdStr = tokenProvider.validateAndGetUserId(token);

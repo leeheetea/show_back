@@ -19,13 +19,11 @@ public class ReservationDTO {
 
     private String reservationShowVenue;
 
-    private String reservationPrice;
+    private int reservationPrice;
 
     private int reservationTicketAmount;
 
     private Long orderId;
-
-    private Long seatId;
 
     private Long showId;
 }

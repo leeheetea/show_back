@@ -1,6 +1,6 @@
 package com.showback.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,24 +26,32 @@ public class Show {
 
     private String thumbnailUrl;
 
+    private String period;
+
     private int price;
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
+    @JsonManagedReference
     private Venue venue;
 
     @OneToMany(mappedBy = "show")
+    @JsonManagedReference
     private List<ShowSeat> showSeats = new ArrayList<>();
 
     @OneToMany(mappedBy = "show")
+    @JsonManagedReference
     private List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShowSchedule> showSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShowBanner> showBanners = new ArrayList<>();
 }

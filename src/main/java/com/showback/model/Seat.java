@@ -1,6 +1,5 @@
 package com.showback.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,17 +21,12 @@ public class Seat {
 
     private int seatColumn;
 
-    @OneToMany(mappedBy = "seat")
-    private List<OrderDetail> orderDetails = new ArrayList<>();
-
-    @OneToMany(mappedBy = "seat")
-    private List<Reservation> reservations = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "venue_id")
+    private Venue venue;
 
     @OneToMany(mappedBy = "seat")
     private List<ShowSeat> showSeats = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "venue_id")
-    private Venue venue;
 
 }

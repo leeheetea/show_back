@@ -1,10 +1,13 @@
 package com.showback.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -17,11 +20,12 @@ public class ShowSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
 
-    private Date scheduleDate;
+    private LocalDate scheduleDate;
 
-    private Date scheduleTime;
+    private LocalTime scheduleTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "show_id")
+    @JsonBackReference
     private Show show;
 }
