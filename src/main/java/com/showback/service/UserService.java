@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
@@ -43,7 +42,6 @@ public class UserService {
         if(loginUser != null && passwordEncoder.matches(password, loginPassword.getUserPassword())) {
             return loginUser;
         }
-
         return null;
     }
 
@@ -58,7 +56,6 @@ public class UserService {
                     .authDate(userAuth.getAuthDate())
                     .build();
         }
-
         return null;
     }
 
@@ -119,15 +116,5 @@ public class UserService {
 
         return null;
     }
-
-
-    // login jwt userId, delete account
-//    public void deleteAccount(Long userId) {
-//
-//    }
-
-
-
-
 }
 

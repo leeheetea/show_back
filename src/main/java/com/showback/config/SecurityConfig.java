@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .antMatchers("/favicon.ico", "/resources/**", "/error");
+                .antMatchers("/favicon.ico", "/resources/**", "/error", "/show","/show/**");
     }
 
 }

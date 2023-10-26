@@ -20,4 +20,5 @@ public class VenueDTO {
     private List<SeatDTO> seats;
 
     private List<ShowDTO> shows;
+
 }

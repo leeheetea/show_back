@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityExistsException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -25,7 +28,6 @@ class ShowRepositoryTest {
     private VenueRepository venueRepository;
 
     @Autowired
-
     private ShowScheduleRepository showScheduleRepository;
 
     private Show show;
@@ -48,16 +50,14 @@ class ShowRepositoryTest {
 
         ArrayList<ShowSchedule> showSchedules = new ArrayList<>();
         ShowSchedule showSchedule = new ShowSchedule();
-        showSchedule.setScheduleDate(new Date());
-        showSchedule.setScheduleTime(new Date());
+        showSchedule.setScheduleDate(LocalDate.parse("2023-10-12"));
+        showSchedule.setScheduleTime(LocalTime.parse("10:00"));
 
-        // Show 객체를 ShowSchedule에 연결
         showSchedule.setShow(show);
 
         showSchedules.add(showSchedule);
         show.setShowSchedules(showSchedules);
 
-        // 먼저 Show 객체를 저장하고, 연결된 ShowSchedule도 함께 저장됩니다.
         showRepository.save(show);
     }
 
@@ -68,7 +68,7 @@ class ShowRepositoryTest {
 
     @Test
     void findByShowId_ShouldReturnShow() {
-        Show foundShow = showRepository.findByShowId(show.getShowId());
+        Show foundShow = showRepository.findById(show.getShowId()).orElseThrow(EntityExistsException::new);
         ShowSchedule showSchedule = showScheduleRepository.findByShow(foundShow);
 
 
