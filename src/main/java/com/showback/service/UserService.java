@@ -6,13 +6,14 @@ import com.showback.model.UserAuth;
 import com.showback.repository.PasswordRepository;
 import com.showback.repository.UserAuthRepository;
 import com.showback.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
     @Autowired
@@ -30,7 +31,7 @@ public class UserService {
                          String validatePeriod) {
 
         User user = new User();
-        user.setUserName(username);
+        user.setUsername(username);
 
         Password userPassword = new Password();
         userPassword.setUserPassword(password);
@@ -50,5 +51,4 @@ public class UserService {
 
         return user;
     }
-
 }

@@ -22,11 +22,11 @@ public class QShowSchedule extends EntityPathBase<ShowSchedule> {
 
     public static final QShowSchedule showSchedule = new QShowSchedule("showSchedule");
 
-    public final DateTimePath<java.util.Date> scheduleDate = createDateTime("scheduleDate", java.util.Date.class);
+    public final DatePath<java.time.LocalDate> scheduleDate = createDate("scheduleDate", java.time.LocalDate.class);
 
     public final NumberPath<Long> scheduleId = createNumber("scheduleId", Long.class);
 
-    public final DateTimePath<java.util.Date> scheduleTime = createDateTime("scheduleTime", java.util.Date.class);
+    public final TimePath<java.time.LocalTime> scheduleTime = createTime("scheduleTime", java.time.LocalTime.class);
 
     public final QShow show;
 

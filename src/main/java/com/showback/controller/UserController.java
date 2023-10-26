@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping("/user")
     public ResponseEntity<String> register(@RequestBody UserDTO userDTO){
         User user = User.builder()
-                .userName(userDTO.getUsername())
+                .username(userDTO.getUsername())
                 .build();
         return ResponseEntity.ok("User registered");
     }

@@ -23,6 +23,8 @@ public class ShowDTO {
 
     private String thumbnailUrl;
 
+    private String period;
+
     private int price;
 
     private Long venueId;

@@ -28,9 +28,7 @@ public class QReservation extends EntityPathBase<Reservation> {
 
     public final NumberPath<Long> reservationId = createNumber("reservationId", Long.class);
 
-    public final StringPath reservationPrice = createString("reservationPrice");
-
-    public final DateTimePath<java.util.Date> reservationShowDate = createDateTime("reservationShowDate", java.util.Date.class);
+    public final NumberPath<Integer> reservationPrice = createNumber("reservationPrice", Integer.class);
 
     public final StringPath reservationShowName = createString("reservationShowName");
 
@@ -39,8 +37,6 @@ public class QReservation extends EntityPathBase<Reservation> {
     public final StringPath reservationState = createString("reservationState");
 
     public final NumberPath<Integer> reservationTicketAmount = createNumber("reservationTicketAmount", Integer.class);
-
-    public final QSeat seat;
 
     public final QShow show;
 
@@ -63,7 +59,6 @@ public class QReservation extends EntityPathBase<Reservation> {
     public QReservation(Class<? extends Reservation> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
-        this.seat = inits.isInitialized("seat") ? new QSeat(forProperty("seat"), inits.get("seat")) : null;
         this.show = inits.isInitialized("show") ? new QShow(forProperty("show"), inits.get("show")) : null;
     }
 

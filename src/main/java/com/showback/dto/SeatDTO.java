@@ -16,10 +16,6 @@ public class SeatDTO {
 
     private Long venueId;
 
-    private List<Long> orderDetailIds;
-
-    private List<Long> reservationIds;
-
     private List<Long> showSeatIds;
 
 }

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,9 +33,9 @@ import java.util.stream.Collectors;
 public class ShowService {
 
     private final ShowRepository showRepository;
-    private final ShowScheduleRepository showScheduleRepository;
-    private final ShowBannerRepository showBannerRepository;
     private final VenueRepository venueRepository;
+    private final ShowBannerRepository showBannerRepository;
+    private final ShowScheduleRepository showScheduleRepository;
 
     private final ShowMapper showMapper;
     private final ShowScheduleMapper showScheduleMapper;
@@ -43,25 +44,17 @@ public class ShowService {
     private final ObjectMapper objectMapper;
 
 
-
-
-    private List<ShowScheduleDTO> convertToScheduleDTOs(List<ShowSchedule> schedules) {
-        return schedules.stream().map(showScheduleMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    private List<ShowBannerDTO> convertToBannerDTOs(List<ShowBanner> banners) {
-        return banners.stream().map(showBannerMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public ShowDTO findShowDTOById(Long showId) throws JsonProcessingException {
         Show foundShow = showRepository.findById(showId)
                 .orElseThrow(() -> new ShowNotFoundException(showId));
 
-        List<ShowScheduleDTO> showScheduleDTOs = convertToScheduleDTOs(foundShow.getShowSchedules());
-        List<ShowBannerDTO> showBannerDTOs = convertToBannerDTOs(foundShow.getShowBanners());
+        List<ShowScheduleDTO> showScheduleDTOs = foundShow.getShowSchedules().stream()
+                .map(showScheduleMapper::toDTO)
+                .collect(Collectors.toList());
+        List<ShowBannerDTO> showBannerDTOs = foundShow.getShowBanners().stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
 
         List<String> contentDetail = objectMapper
                 .readValue(foundShow.getContentDetail(), new TypeReference<List<String>>() {
@@ -89,25 +82,53 @@ public class ShowService {
         }
 
         Show show = showMapper.toEntity(showDTO, venue);
+
         return showRepository.save(show);
     }
 
-//    @Transactional
-//    public ShowSchedule createShowSchedule(Long showId, ShowSchedule showSchedule){
-//        Show show = showRepository.findById(showId)
-//                .orElseThrow(() -> new ShowNotFoundException(showId));
-//
-//        showSchedule.setShow(show);
-//        return showScheduleRepository.save(showSchedule);
-//    }
-//
-//    @Transactional
-//    public ShowBanner createShowBanner(Long showId, ShowBanner showBanner){
-//        Show show = showRepository.findById(showId)
-//                .orElseThrow(() -> new ShowNotFoundException(showId));
-//
-//        showBanner.setShow(show);
-//        return showBannerRepository.save(showBanner);
-//    }
-//
+    @Transactional
+    public Long updateShow(ShowDTO showDTO) throws JsonProcessingException{
+        Show show = showRepository.findById(showDTO.getShowId())
+                .orElseThrow(() -> new ShowNotFoundException(showDTO.getShowId()));
+
+        show.setTitle(showDTO.getTitle());
+        show.setType(showDTO.getType());
+
+        String contentDetail = objectMapper.writeValueAsString(showDTO.getContentDetail());
+        show.setContentDetail(contentDetail);
+        show.setThumbnailUrl(showDTO.getThumbnailUrl());
+        show.setPrice(showDTO.getPrice());
+        show.setPeriod(showDTO.getPeriod());
+
+        if(showDTO.getVenueId() != null){
+            Venue venue = venueRepository.findById(showDTO.getVenueId()).orElseThrow(EntityNotFoundException::new);
+            show.setVenue(venue);
+        }
+
+        List<ShowSchedule> schedules = new ArrayList<>();
+
+        for (ShowScheduleDTO dto : showDTO.getShowSchedules()) {
+            if (dto.getShowId() != null) {
+                ShowSchedule Schedule = showScheduleRepository.findById(dto.getShowId())
+                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
+                schedules.add(Schedule);
+            } else {
+                schedules.add(showScheduleMapper.toEntity(dto));  // 새로운 ShowSchedule
+            }
+        }
+
+        List<ShowBanner> showBanners = new ArrayList<>();
+
+        for (ShowBannerDTO dto : showDTO.getShowBanners()) {
+            if (dto.getShowId() != null) {
+                ShowBanner existingBanner = showBannerRepository.findById(dto.getShowId())
+                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
+                showBanners.add(existingBanner);
+            } else {
+                showBanners.add(showBannerMapper.toEntity(dto));
+            }
+        }
+        return show.getShowId();
+    }
+
 }

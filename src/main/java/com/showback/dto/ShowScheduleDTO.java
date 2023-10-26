@@ -1,18 +1,18 @@
 package com.showback.dto;
 
-import com.showback.model.ShowSchedule;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 public class ShowScheduleDTO {
 
     private Long scheduleId;
 
-    private Date scheduleDate;
+    private LocalDate scheduleDate;
 
-    private Date scheduleTime;
+    private LocalTime scheduleTime;
 
     private Long showId;
 

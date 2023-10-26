@@ -1,15 +1,14 @@
 package com.showback.repository;
 
-import com.showback.model.UserAuth;
+import com.showback.model.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserAuthRepository extends JpaRepository<UserAuth, Long> {
+public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
 
-    @Query("SELECT ua FROM UserAuth ua WHERE ua.user.userId = :userId")
-    UserAuth findByUserId(@Param("userId") Long userId);
-
+    @Query("SELECT count(od) FROM OrderDetail od WHERE od.order.orderId = :orderId")
+    int countByOrderId(@Param("orderId") Long orderId);
 }

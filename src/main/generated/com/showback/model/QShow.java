@@ -24,6 +24,8 @@ public class QShow extends EntityPathBase<Show> {
 
     public final StringPath contentDetail = createString("contentDetail");
 
+    public final StringPath period = createString("period");
+
     public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
     public final ListPath<Reservation, QReservation> reservations = this.<Reservation, QReservation>createList("reservations", Reservation.class, QReservation.class, PathInits.DIRECT2);

@@ -22,10 +22,6 @@ public class QSeat extends EntityPathBase<Seat> {
 
     public static final QSeat seat = new QSeat("seat");
 
-    public final ListPath<OrderDetail, QOrderDetail> orderDetails = this.<OrderDetail, QOrderDetail>createList("orderDetails", OrderDetail.class, QOrderDetail.class, PathInits.DIRECT2);
-
-    public final ListPath<Reservation, QReservation> reservations = this.<Reservation, QReservation>createList("reservations", Reservation.class, QReservation.class, PathInits.DIRECT2);
-
     public final NumberPath<Integer> seatColumn = createNumber("seatColumn", Integer.class);
 
     public final NumberPath<Long> seatId = createNumber("seatId", Long.class);

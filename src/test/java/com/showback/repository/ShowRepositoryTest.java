@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.persistence.EntityExistsException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -48,8 +50,8 @@ class ShowRepositoryTest {
 
         ArrayList<ShowSchedule> showSchedules = new ArrayList<>();
         ShowSchedule showSchedule = new ShowSchedule();
-        showSchedule.setScheduleDate(new Date());
-        showSchedule.setScheduleTime(new Date());
+        showSchedule.setScheduleDate(LocalDate.parse("2023-10-12"));
+        showSchedule.setScheduleTime(LocalTime.parse("10:00"));
 
         showSchedule.setShow(show);
 
