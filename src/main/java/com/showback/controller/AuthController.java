@@ -12,14 +12,14 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping("/")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
     // kakao
-    @GetMapping("/user/oauth/kakao")
+    @GetMapping("/oauth/kakao")
     public ResponseEntity<?> kakaoLogin(HttpServletRequest request){
 
         String code = request.getParameter("code");

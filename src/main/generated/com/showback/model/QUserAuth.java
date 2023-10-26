@@ -38,7 +38,7 @@ public class QUserAuth extends EntityPathBase<UserAuth> {
 
     public final ListPath<Order, QOrder> orderList = this.<Order, QOrder>createList("orderList", Order.class, QOrder.class, PathInits.DIRECT2);
 
-    public final StringPath smsChoice = createString("smsChoice");
+    public final BooleanPath smsChoice = createBoolean("smsChoice");
 
     public final QUser user;
 
