@@ -16,8 +16,12 @@ public class UserDTO {
     private String token;
     private String username;
     private String password;
+    private String password_verified;
     private String name;
     private String email;
     private String phone;
+    private boolean smscheck;
+    private String isRadioChecked;
+    private Date authDate;
 
 }

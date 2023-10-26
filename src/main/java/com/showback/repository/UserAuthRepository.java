@@ -9,6 +9,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserAuthRepository extends JpaRepository<UserAuth, Long> {
 
+    UserAuth findByAuthName(String authName);
+    UserAuth findByAuthEmail(String authEmail);
+    UserAuth findByUser_UserId(Long userId);
+
     @Query("SELECT ua FROM UserAuth ua WHERE ua.user.userId = :userId")
     UserAuth findByUserId(@Param("userId") Long userId);
 
