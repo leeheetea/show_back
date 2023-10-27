@@ -19,6 +19,7 @@ public class Review {
 
     private int reviewGrade;
 
+    @Column(columnDefinition = "TEXT")
     private String reviewText;
 
     private String reviewImgUrl;
