@@ -48,5 +48,6 @@ public class UserAuth {
     @OneToMany(mappedBy = "userAuth", cascade = CascadeType.ALL)
     private List<Notice> noticeList;
 
-
+    @OneToMany(mappedBy = "userAuth", cascade = CascadeType.ALL)
+    private List<Review> reviews;
 }

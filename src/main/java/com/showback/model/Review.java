@@ -27,4 +27,9 @@ public class Review {
     @JoinColumn(name = "show_id")
     @JsonBackReference
     private Show show;
+
+    @ManyToOne
+    @JoinColumn(name = "auth_id")
+    @JsonBackReference
+    private UserAuth userAuth;
 }
