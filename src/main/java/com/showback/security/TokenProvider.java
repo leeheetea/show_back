@@ -22,6 +22,7 @@ public class TokenProvider {
                 .setSubject(userEntity.getUserId().toString())
                 .claim("ipAddress", ipAddress)
                 .claim("userAgent", userAgent)
+                .claim("loginType", userEntity.getLoginType())
                 .setIssuer("showday")
                 .setIssuedAt(new Date())
                 .setExpiration(expireyDate)
