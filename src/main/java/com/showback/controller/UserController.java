@@ -162,4 +162,21 @@ public class UserController {
         return  ResponseEntity.badRequest().body("User not found");
     }
 
+    @PostMapping("/userinfo/authentication")
+    public ResponseEntity<?> getUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
+
+        if(userId != null) {
+            UserDTO responseDTO = userService.verifyPasswordBeforeGetUser(userId, userDTO.getPassword(), passwordEncoder);
+            if (responseDTO != null) {
+                return ResponseEntity.ok().body(responseDTO);
+            } else {
+                return ResponseEntity.badRequest().body("Incorrect Password");
+            }
+        }
+        return  ResponseEntity.badRequest().body("User not found");
+    }
+
 }

@@ -116,5 +116,25 @@ public class UserService {
 
         return null;
     }
+
+    public UserDTO verifyPasswordBeforeGetUser(Long userId, String password, PasswordEncoder passwordEncoder) {
+        Password passwordEntity = passwordRepository.findByUser_UserId(userId);
+
+        if(passwordEntity != null && passwordEncoder.matches(password, passwordEntity.getUserPassword())){
+            User userEntity = userRepository.findById(userId).orElse(null);
+            UserAuth userAuthEntity = userEntity.getUserAuth();
+            return UserDTO.builder()
+                    .username(userEntity.getUsername())
+                    .name(userAuthEntity.getAuthName())
+                    .email(userAuthEntity.getAuthEmail())
+                    .phone(userAuthEntity.getAuthPhone())
+                    .smscheck(userAuthEntity.isSmsChoice())
+                    .isRadioChecked(userAuthEntity.getValidatePeriod())
+                    .build();
+        }
+
+        return null;
+    }
 }
+
 
