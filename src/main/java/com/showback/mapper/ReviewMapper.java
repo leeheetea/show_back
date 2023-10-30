@@ -2,6 +2,10 @@ package com.showback.mapper;
 
 import com.showback.dto.ReviewDTO;
 import com.showback.model.Review;
+import com.showback.model.Show;
+import com.showback.model.UserAuth;
+import com.showback.repository.ShowRepository;
+import com.showback.repository.UserAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,20 +13,28 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ReviewMapper {
 
-    public Review toEntity(ReviewDTO reviewDTO){
+    private final UserAuthRepository userAuthRepository;
+    private final ShowRepository showRepository;
 
+
+    public Review toEntity(ReviewDTO reviewDTO){
         if(reviewDTO == null){
             return null;
         }
-
         Review review = new Review();
+
         review.setReviewId(reviewDTO.getReviewId());
         review.setReviewGrade(reviewDTO.getReviewGrade());
         review.setReviewText(reviewDTO.getReviewText());
         review.setReviewImgUrl(reviewDTO.getReviewImgUrl());
-//        review.setUserAuth();// 테이블에서 찾기 db에서 꺼내와서 넣기!!!!! 
-//        review.setShow();
-
+        if (reviewDTO.getAuthId() != null) {
+            UserAuth userAuth = userAuthRepository.findById(reviewDTO.getAuthId()).orElse(null);
+            review.setUserAuth(userAuth);
+        }
+        if (reviewDTO.getShowId() != null) {
+            Show show = showRepository.findById(reviewDTO.getShowId()).orElse(null);
+            review.setShow(show);
+        }
         return review;
     }
 }
