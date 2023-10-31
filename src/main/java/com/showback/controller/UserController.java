@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    // 아이디 찾기
+    // find username
     @PostMapping("/username/retrieve")
     public ResponseEntity<?> retrieveUsername(@RequestBody UserDTO userDTO) {
         UserDTO responseUserDTO = userService.retrieveUsername(userDTO.getName(), userDTO.getEmail());
@@ -90,17 +90,19 @@ public class UserController {
         }
     }
 
-    // 비밀번호 재설정
-//    @PostMapping("/user/password/retrieve")
-//    public ResponseEntity<?> retrievePassword(@RequestBody UserDTO userDTO){
-//       Password resetPassword = userService.retrievePassword(userDTO.getUsername(), userDTO.getName(), userDTO.getEmail());
-//
-//       if(resetPassword != null) {
-//
-//       }
-//        return  null;
-//    }
+    // find password
+    @PostMapping("/password/request")
+    public ResponseEntity<?> requestPassword(@RequestBody UserDTO userDTO){
+       Password resetPassword = userService.requestPassword(userDTO.getUsername(), userDTO.getName(), userDTO.getEmail());
 
+       if(resetPassword != null) {
+           return ResponseEntity.ok().body("Password found");
+       } else {
+           return ResponseEntity.badRequest().body("User not found");
+       }
+    }
+
+    // updatePasswordByUsername
     @PostMapping("/password/retrieve")
     public ResponseEntity<?> retrievePassword(@RequestBody UserDTO userDTO) {
         userService.updatePasswordByUsername(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
@@ -108,6 +110,7 @@ public class UserController {
         return ResponseEntity.ok().body("password updated");
     }
 
+    // resetPassword
     @PostMapping("/password/reset")
     public ResponseEntity<?> resetPassword(
             HttpServletRequest request,

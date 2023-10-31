@@ -11,4 +11,6 @@ public interface PasswordRepository extends JpaRepository<Password, Long> {
     Password findByUser_Username(String username);
 
     Password findByUserPassword(String password);
+
+    Password findByUser_UsernameAndUser_UserAuth_AuthNameAndUser_UserAuth_AuthEmail(String username, String authName, String authEmail);
 }

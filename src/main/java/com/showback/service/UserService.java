@@ -59,17 +59,15 @@ public class UserService {
         return null;
     }
 
-    // 아이디 이름 이메일 입력하면 이메일로 인증코드 날리고 체크하기
-//    public Password retrievePassword(final String username, final String name, final String email) {
-//        final Password resetPassword = passwordRepository.findByUser_UsernameAndUserAuth_AuthNameAndUserAuth_AuthEmail(username, name, email);
-//
-//        if(resetPassword != null) {
-//            return resetPassword;
-//        }
-//
-//        return null;
-//
-//    }
+    // username, name, email submit하면 email로 code send
+    public Password requestPassword(final String username, final String name, final String email) {
+        final Password resetPassword = passwordRepository.findByUser_UsernameAndUser_UserAuth_AuthNameAndUser_UserAuth_AuthEmail(username, name, email);
+
+        if(resetPassword != null) {
+            return resetPassword;
+        }
+        return null;
+    }
 
     // pwd update
     @Transactional
