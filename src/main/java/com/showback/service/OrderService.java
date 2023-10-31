@@ -1,6 +1,7 @@
 package com.showback.service;
 
 import com.showback.dto.OrderDTO;
+import com.showback.dto.OrderDetailDTO;
 import com.showback.mapper.OrderDetailMapper;
 import com.showback.mapper.ReservationMapper;
 import com.showback.model.*;
@@ -21,20 +22,19 @@ public class OrderService {
 
     private final OrderDetailRepository orderDetailRepository;
     private final UserAuthRepository userAuthRepository;
+    private final ShowRepository showRepository;
+    private final ReservationRepository reservationRepository;
 
     private final OrderDetailMapper orderDetailMapper;
     private final ReservationMapper reservationMapper;
 
-    private final ShowRepository showRepository;
 
     @Transactional
     public Order createOrder(OrderDTO orderDTO, Long userId, Long showId){
         Order order = new Order();
-        Long orderId = orderDTO.getOrderId();
-        int ticketAmount = orderDetailRepository.countByOrderId(orderId);
 
-        order.setTicketAmount(ticketAmount);
-        order.setOrderState("주문중");
+        order.setTicketAmount(orderDTO.getTicketAmount());
+        order.setOrderState(orderDTO.getOrderState());
         order.setOrderDate(new Date());
 
         UserAuth userAuth = userAuthRepository.findByUserId(userId);
@@ -54,7 +54,6 @@ public class OrderService {
            Reservation reservation = reservationMapper.toEntity(orderDTO.getReservation());
            order.setReservation(reservation);
        } else {
-           Reservation reservation = new Reservation();
            Show show = showRepository.findById(showId)
                    .orElseThrow(() -> new EntityNotFoundException("Show with ID " + showId + " not found."));
 
@@ -67,16 +66,19 @@ public class OrderService {
                reservationPrice += orderDetail.getFinalPrice();
            }
 
-           reservation.builder()
+           Reservation reservation = Reservation.builder()
                    .reservationDate(new Date())
                    .reservationState("입금 대기중")
                    .reservationShowName(show.getTitle())
                    .reservationShowVenue(show.getVenue().getVenueName())
                    .reservationPrice(reservationPrice)
-                   .reservationTicketAmount(ticketAmount)
+                   .reservationTicketAmount(orderDTO.getTicketAmount())
                    .order(order)
                    .show(show)
                    .build();
+
+           reservationRepository.save(reservation);
+
        }
        return order;
     }

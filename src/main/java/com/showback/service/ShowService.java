@@ -49,27 +49,7 @@ public class ShowService {
         Show foundShow = showRepository.findById(showId)
                 .orElseThrow(() -> new ShowNotFoundException(showId));
 
-        List<ShowScheduleDTO> showScheduleDTOs = foundShow.getShowSchedules().stream()
-                .map(showScheduleMapper::toDTO)
-                .collect(Collectors.toList());
-        List<ShowBannerDTO> showBannerDTOs = foundShow.getShowBanners().stream()
-                .map(showBannerMapper::toDTO)
-                .collect(Collectors.toList());
-
-        List<String> contentDetail = objectMapper
-                .readValue(foundShow.getContentDetail(), new TypeReference<List<String>>() {
-        });
-
-        return ShowDTO.builder()
-                .showId(foundShow.getShowId())
-                .title(foundShow.getTitle())
-                .type(foundShow.getType())
-                .contentDetail(contentDetail)
-                .thumbnailUrl(foundShow.getThumbnailUrl())
-                .price(foundShow.getPrice())
-                .showSchedules(showScheduleDTOs)
-                .showBanners(showBannerDTOs)
-                .build();
+        return showMapper.toDTO(foundShow);
     }
 
     @Transactional
