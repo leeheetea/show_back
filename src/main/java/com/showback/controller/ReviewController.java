@@ -17,13 +17,13 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<?> createReview(@RequestBody ReviewDTO reviewDTO, BindingResult bindingResult) throws JsonProcessingException {
-        if (bindingResult.hasErrors()){
+    public ResponseEntity<?> createReview(@RequestBody ReviewDTO reviewDTO,
+                                          BindingResult bindingResult) throws JsonProcessingException {
+ if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
         Review review = reviewService.createReview(reviewDTO);
         return ResponseEntity.ok().body(review);
     }
-//    @GetMapping
-//    public ResponseEntity<>
+
 }

@@ -8,6 +8,11 @@ import com.showback.repository.UserAuthRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 public class ReviewServiceTest {
@@ -23,13 +28,12 @@ public class ReviewServiceTest {
     @Test
     public void testCreateReview() throws JsonProcessingException {
         ReviewDTO reviewDTO = new ReviewDTO();
-//        reviewDTO.setAuthId(1L);
         reviewDTO.setReviewText("test text");
         reviewDTO.setReviewGrade(5);
         reviewDTO.setReviewImgUrl("test url");
         reviewDTO.setShowId(1L);
         Review createdReview = reviewService.createReview(reviewDTO);
-
-
     }
+
+
 }
