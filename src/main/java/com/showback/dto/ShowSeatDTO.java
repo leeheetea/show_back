@@ -1,5 +1,6 @@
 package com.showback.dto;
 
+import com.showback.model.Seat;
 import lombok.Data;
 
 @Data
@@ -9,7 +10,8 @@ public class ShowSeatDTO {
 
     private boolean canReservation;
 
+    private SeatDTO seatDTO;
+
     private Long showId;
 
-    private Long seatId;
 }

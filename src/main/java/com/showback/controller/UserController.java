@@ -6,6 +6,7 @@ import com.showback.model.User;
 import com.showback.model.UserAuth;
 import com.showback.security.TokenProvider;
 import com.showback.service.UserService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ public class UserController {
     private final UserService userService;
     private final TokenProvider tokenProvider;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+
 
     // 회원가입
     @PostMapping

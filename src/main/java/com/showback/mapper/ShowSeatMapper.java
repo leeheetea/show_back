@@ -1,5 +1,6 @@
 package com.showback.mapper;
 
+import com.showback.dto.SeatDTO;
 import com.showback.dto.ShowSeatDTO;
 import com.showback.exception.ShowNotFoundException;
 import com.showback.model.Seat;
@@ -10,34 +11,35 @@ import com.showback.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityNotFoundException;
-
 @Component
 @RequiredArgsConstructor
 public class ShowSeatMapper {
 
     private final ShowRepository showRepository;
     private final SeatRepository seatRepository;
+    private final SeatMapper seatMapper;
 
     public ShowSeatDTO toDTO(ShowSeat showSeat) {
         ShowSeatDTO dto = new ShowSeatDTO();
+        Seat seat = showSeat.getSeat();
+        SeatDTO seatDTO = seatMapper.toDTO(seat);
+
 
         dto.setShowSeatId(showSeat.getShowSeatId());
         dto.setCanReservation(showSeat.isCanReservation());
         dto.setShowId(showSeat.getShow() != null ? showSeat.getShow().getShowId() : null);
-        dto.setSeatId(showSeat.getSeat() != null ? showSeat.getSeat().getSeatId() : null);
+        dto.setSeatDTO(seatDTO);
 
         return dto;
     }
 
     public ShowSeat toEntity(ShowSeatDTO dto) {
         ShowSeat showSeat = new ShowSeat();
+        SeatDTO seatDTO = dto.getSeatDTO();
+        Seat seat = seatMapper.toEntity(seatDTO);
 
         Show show = showRepository.findById(dto.getShowId())
                 .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-
-        Seat seat = seatRepository.findById(dto.getSeatId())
-                .orElseThrow(EntityNotFoundException::new);
 
         showSeat.setShowSeatId(dto.getShowSeatId());
         showSeat.setCanReservation(dto.isCanReservation());

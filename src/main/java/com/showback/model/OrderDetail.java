@@ -21,7 +21,7 @@ public class OrderDetail {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "show_seat_id")
     private ShowSeat showSeat;
 }
