@@ -25,6 +25,11 @@ public class VenueMapper {
         }
 
         Venue venue = new Venue();
+
+        if(venueDTO.getVenueId() != null){
+            venue.setVenueId(venueDTO.getVenueId());
+        }
+
         venue.setVenueName(venueDTO.getVenueName());
         venue.setVenueAddress(venueDTO.getVenueAddress());
         venue.setSeatMaxRow(venueDTO.getSeatMaxRow());

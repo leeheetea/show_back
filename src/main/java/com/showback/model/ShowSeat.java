@@ -17,7 +17,7 @@ public class ShowSeat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long showSeatId;
 
-    private boolean canReservation = false;
+    private boolean canReservation = true;
 
     @ManyToOne
     @JoinColumn(name = "show_id")

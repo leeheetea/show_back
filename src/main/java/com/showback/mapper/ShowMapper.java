@@ -37,12 +37,6 @@ public class ShowMapper {
         show.setPeriod(showDTO.getPeriod());
         show.setPrice(showDTO.getPrice());
 
-        // VenueDTO를 Venue 엔터티로 변환
-        if (venue != null) {
-            show.setVenue(venue);
-        }
-
-        // ShowSchedule과 연관관계 매핑
         if (showDTO.getShowSchedules() != null) {
 
             List<ShowSchedule> schedules = showDTO.getShowSchedules().stream()
@@ -52,13 +46,17 @@ public class ShowMapper {
             show.setShowSchedules(schedules);
         }
 
-        // ShowBanner와 연관관계 매핑
         if (showDTO.getShowBanners() != null) {
             List<ShowBanner> showBanners = showDTO.getShowBanners().stream()
                     .map(showBannerMapper::toEntity)
                     .collect(Collectors.toList());
             showBanners.forEach(showbanner -> showbanner.setShow(show));
             show.setShowBanners(showBanners);
+        }
+
+        if (venue != null) {
+            show.setVenue(venue);
+            venue.addShow(show);
         }
 
         return show;

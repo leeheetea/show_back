@@ -11,32 +11,33 @@ import com.showback.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityNotFoundException;
+
 @Component
 @RequiredArgsConstructor
 public class ShowSeatMapper {
 
     private final ShowRepository showRepository;
     private final SeatRepository seatRepository;
-    private final SeatMapper seatMapper;
 
     public ShowSeatDTO toDTO(ShowSeat showSeat) {
         ShowSeatDTO dto = new ShowSeatDTO();
         Seat seat = showSeat.getSeat();
-        SeatDTO seatDTO = seatMapper.toDTO(seat);
-
 
         dto.setShowSeatId(showSeat.getShowSeatId());
         dto.setCanReservation(showSeat.isCanReservation());
         dto.setShowId(showSeat.getShow() != null ? showSeat.getShow().getShowId() : null);
-        dto.setSeatDTO(seatDTO);
+        dto.setSeatId(seat.getSeatId());
 
         return dto;
     }
 
     public ShowSeat toEntity(ShowSeatDTO dto) {
         ShowSeat showSeat = new ShowSeat();
-        SeatDTO seatDTO = dto.getSeatDTO();
-        Seat seat = seatMapper.toEntity(seatDTO);
+        Long seatId = dto.getSeatId();
+
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(EntityNotFoundException::new);
 
         Show show = showRepository.findById(dto.getShowId())
                 .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));

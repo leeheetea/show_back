@@ -28,5 +28,11 @@ public class Seat {
     @OneToMany(mappedBy = "seat")
     private List<ShowSeat> showSeats = new ArrayList<>();
 
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+        if(!venue.getSeats().contains(this)) {
+            venue.getSeats().add(this);
+        }
+    }
 
 }

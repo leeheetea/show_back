@@ -10,7 +10,7 @@ public class ShowSeatDTO {
 
     private boolean canReservation;
 
-    private SeatDTO seatDTO;
+    private Long seatId;
 
     private Long showId;
 

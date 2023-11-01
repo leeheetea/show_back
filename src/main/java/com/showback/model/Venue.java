@@ -32,4 +32,9 @@ public class Venue {
     @OneToMany(mappedBy = "venue")
     @JsonBackReference
     private List<Show> shows = new ArrayList<>();
+
+    public void addShow(Show show) {
+        shows.add(show);
+        show.setVenue(this);
+    }
 }
