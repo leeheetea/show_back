@@ -52,9 +52,9 @@ public class UserService {
         LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(loginUser);
 
         if(loginUser != null && passwordEncoder.matches(password, loginPassword.getUserPassword())) {
-            if(!lastLoginLog.getAccountStatus()) {
+            if(lastLoginLog == null || !lastLoginLog.getAccountStatus()) {
                 loginLog.setAccountStatus(true);
-                loginLog.setLoginFailureCount(lastLoginLog.getLoginFailureCount());
+                loginLog.setLoginFailureCount(lastLoginLog == null ? 0 : lastLoginLog.getLoginFailureCount());
                 loginLogRepository.save(loginLog);
                 return  loginUser;
             } else {
