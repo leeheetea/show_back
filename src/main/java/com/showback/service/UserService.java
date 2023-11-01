@@ -1,9 +1,11 @@
 package com.showback.service;
 
 import com.showback.dto.UserDTO;
+import com.showback.model.LoginLog;
 import com.showback.model.Password;
 import com.showback.model.User;
 import com.showback.model.UserAuth;
+import com.showback.repository.LoginLogRepository;
 import com.showback.repository.PasswordRepository;
 import com.showback.repository.UserAuthRepository;
 import com.showback.repository.UserRepository;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -22,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordRepository passwordRepository;
     private final UserAuthRepository userAuthRepository;
+    private final LoginLogRepository loginLogRepository;
 
     // join
     public void register(User userEntity, Password passwordEntity, UserAuth userAuthEntity) {
@@ -32,17 +36,43 @@ public class UserService {
         // if need return
         // 1. custom DTO
         // 2. Entity List
+        // fact) need remake
     }
 
     // login
-    public User getByCredentials(final String username, final String password, final PasswordEncoder passwordEncoder){
+    public User getByCredentials(final String username, final String password, final PasswordEncoder passwordEncoder, String ipAddress, String userAgent){
         final User loginUser = userRepository.findByUsername(username);
         final Password loginPassword = passwordRepository.findByUser_UserId(loginUser.getUserId());
+        LoginLog loginLog = new LoginLog();
+        loginLog.setUser(loginUser);
+        loginLog.setIpAddress(ipAddress);
+        loginLog.setUserAgent(userAgent);
+        loginLog.setLoginTime(new Date());
+
+        LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(loginUser);
 
         if(loginUser != null && passwordEncoder.matches(password, loginPassword.getUserPassword())) {
-            return loginUser;
+            if(!lastLoginLog.getAccountStatus()) {
+                loginLog.setAccountStatus(true);
+                loginLog.setLoginFailureCount(lastLoginLog.getLoginFailureCount());
+                loginLogRepository.save(loginLog);
+                return  loginUser;
+            } else {
+                loginLog.setLoginFailureCount(0);
+                loginLog.setAccountStatus(true);
+                loginLogRepository.save(loginLog);
+                return loginUser;
+            }
+        } else {
+            if(lastLoginLog != null) {
+                loginLog.setLoginFailureCount(lastLoginLog.getLoginFailureCount() + 1);
+            } else {
+                loginLog.setLoginFailureCount(1);
+            }
+            loginLog.setAccountStatus(false);
+            loginLogRepository.save(loginLog);
+            return null;
         }
-        return null;
     }
 
     // find id
@@ -70,7 +100,6 @@ public class UserService {
     }
 
     // pwd update
-    @Transactional
     public Password updatePasswordByUsername(final String username, final String newPassword, PasswordEncoder passwordEncoder) {
         final Password passwordEntity = passwordRepository.findByUser_Username(username);
 

@@ -19,15 +19,22 @@ public class LoginLog {
 
     private String ipAddress;
 
+    private String userAgent;
+
     private Date loginTime;
 
+    @Column(nullable = true)
     private Date logoutTime;
 
-    private Date loginFailureCount;
+    private int loginFailureCount;
 
     private Boolean accountStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void incrementLoginFailureCount() {
+        this.loginFailureCount += 1;
+    }
 }

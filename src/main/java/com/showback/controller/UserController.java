@@ -25,7 +25,7 @@ public class UserController {
     private final TokenProvider tokenProvider;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // 회원가입
+    // join
     @PostMapping
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
 
@@ -53,16 +53,14 @@ public class UserController {
         return ResponseEntity.ok().body(responseUserDTO);
     }
 
-    // 로그인
+    // login
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(HttpServletRequest request,@RequestBody UserDTO userDTO) {
-        User userEntity = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
+        String ipAddress = request.getRemoteAddr();
+        String userAgent = request.getHeader("User-Agent");
+        User userEntity = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder, ipAddress, userAgent);
 
         if(userEntity != null) {
-            String ipAddress =  request.getRemoteAddr();
-            String userAgent = request.getHeader("User-Agent");
-            String loginType;
-
             final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
             final UserDTO responseUserDTO = UserDTO.builder()
                     .username(userDTO.getUsername())
@@ -105,9 +103,13 @@ public class UserController {
     // updatePasswordByUsername
     @PostMapping("/password/retrieve")
     public ResponseEntity<?> retrievePassword(@RequestBody UserDTO userDTO) {
-        userService.updatePasswordByUsername(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
+        Password updatePassword = userService.updatePasswordByUsername(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
 
-        return ResponseEntity.ok().body("password updated");
+        if(updatePassword != null) {
+            return ResponseEntity.ok().body("password updated");
+        } else {
+            return ResponseEntity.badRequest().body("password updated fail");
+        }
     }
 
     // resetPassword
@@ -134,6 +136,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
+    // email update
     @PostMapping("/email/update")
     public ResponseEntity<?> updateEmail(HttpServletRequest request, @RequestBody UserDTO userDTO){
         String token = request.getHeader("Authorization").replace("Bearer ", "");
@@ -148,6 +151,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
+    // password auth
     @PostMapping("/password/authentication")
     public ResponseEntity<?> passwordAuthentication(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
@@ -165,6 +169,7 @@ public class UserController {
         return  ResponseEntity.badRequest().body("User not found");
     }
 
+    //
     @PostMapping("/userinfo/authentication")
     public ResponseEntity<?> getUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
