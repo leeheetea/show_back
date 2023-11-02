@@ -1,21 +1,17 @@
 package com.showback.service;
 
 import com.showback.dto.UserDTO;
-import com.showback.model.LoginLog;
-import com.showback.model.Password;
-import com.showback.model.User;
-import com.showback.model.UserAuth;
-import com.showback.repository.LoginLogRepository;
-import com.showback.repository.PasswordRepository;
-import com.showback.repository.UserAuthRepository;
-import com.showback.repository.UserRepository;
+import com.showback.model.*;
+import com.showback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -26,17 +22,58 @@ public class UserService {
     private final PasswordRepository passwordRepository;
     private final UserAuthRepository userAuthRepository;
     private final LoginLogRepository loginLogRepository;
+    private final TermsOfServiceRepository termsOfServiceRepository;
+    private final UserAgreementRepository userAgreementRepository;
+
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // join
-    public void register(User userEntity, Password passwordEntity, UserAuth userAuthEntity) {
+    public UserDTO register(UserDTO userDTO) {
+//        userRepository.save(userEntity);
+//        passwordRepository.save(passwordEntity);
+//        userAuthRepository.save(userAuthEntity);
+
+        User userEntity = new User();
+        userEntity.setUsername(userDTO.getUsername());
+
+        Password passwordEntity = new Password();
+        passwordEntity.setUser(userEntity);
+        passwordEntity.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        UserAuth userAuthEntity = new UserAuth();
+        userAuthEntity.setUser(userEntity);
+        userAuthEntity.setAuthName(userDTO.getName());
+        userAuthEntity.setAuthEmail(userDTO.getEmail());
+        userAuthEntity.setAuthPhone(userDTO.getPhone());
+        userAuthEntity.setSmsChoice(userDTO.isSmscheck());
+        userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
+
         userRepository.save(userEntity);
         passwordRepository.save(passwordEntity);
         userAuthRepository.save(userAuthEntity);
 
-        // if need return
-        // 1. custom DTO
-        // 2. Entity List
-        // fact) need remake
+        for(Map.Entry<String, Boolean> entry : userDTO.getTermsChecked().entrySet()) {
+            String termCode = entry.getKey();
+            Boolean agreed = entry.getValue();
+
+            TermsOfService termsOfService = termsOfServiceRepository.findByTermCode(termCode);
+            if (termsOfService != null) {
+                UserAgreement userAgreement = new UserAgreement();
+                userAgreement.setUser(userEntity);
+                userAgreement.setTermsOfService(termsOfService);
+                userAgreement.setAgreed(agreed);
+                userAgreement.setAgreementDate(new Date());
+
+                userAgreementRepository.save(userAgreement);
+            }
+            else{
+                throw new RuntimeException("No terms found for termCode: " + termCode);
+            }
+        }
+
+        UserDTO responseUserDTO = new UserDTO();
+        responseUserDTO.setName(userDTO.getName());
+        return responseUserDTO;
     }
 
     // login
