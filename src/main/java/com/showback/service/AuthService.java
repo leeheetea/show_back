@@ -89,7 +89,6 @@ public class AuthService {
     public String socialLoginInfo(SocialLoginDTO socialLoginDTO) {
         SocialLogin socialLogin = new SocialLogin();
 
-        socialLogin.setAccessToken(socialLoginDTO.getAccess_token());
 
         String idToken = socialLoginDTO.getId_token();
         String[] splitIdToken = idToken.split("\\.");
@@ -98,24 +97,40 @@ public class AuthService {
         JSONObject payloadJson = new JSONObject(payload);
 
         SocialLogin existingSocialLogin = socialLoginRepository.findBySocialUserIdFromProvider(payloadJson.getString("email"));
+        // if social join already done
         if (existingSocialLogin != null) {
-            // token update
+            System.out.println("----already join");
+            // token update ?
             existingSocialLogin.setAccessToken(socialLoginDTO.getAccess_token());
             socialLoginRepository.save(existingSocialLogin);
-            return existingSocialLogin.getSocialUserIdFromProvider();
+            User associatedUser = existingSocialLogin.getUser();
+
+            return associatedUser.getUsername();
         }
 
-        User user = new User();
-        user.setUsername(payloadJson.getString("email"));
-        user.setLoginType(1);
-        userRepository.save(user);
+        // new social join
+//        User user = new User();
+//        user.setUsername(payloadJson.getString("email"));
+//        user.setLoginType(1);
+//        userRepository.save(user);
 
-        socialLogin.setSocialCode(payloadJson.getString("iss"));
-        socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
-        socialLogin.setUser(user);
-        socialLoginRepository.save(socialLogin);
+//        socialLogin.setSocialCode(payloadJson.getString("iss"));
+//        socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
+//        socialLogin.setUser(user);
+//        socialLoginRepository.save(socialLogin);
+        else {
+            System.out.println("----new join");
+            User user = new User();
+            user.setLoginType(1);
+            userRepository.save(user);
 
-        return payloadJson.getString("email");
+            socialLogin.setAccessToken(socialLoginDTO.getAccess_token());
+            socialLogin.setSocialCode(payloadJson.getString("iss"));
+            socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
+            socialLogin.setUser(user);
+            socialLoginRepository.save(socialLogin);
+            return payloadJson.getString("email");
+        }
     }
 
     public User getByCredentials(final String username){

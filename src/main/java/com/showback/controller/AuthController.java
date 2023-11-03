@@ -5,6 +5,7 @@ import com.showback.dto.UserDTO;
 import com.showback.model.SocialLogin;
 import com.showback.model.User;
 import com.showback.repository.SocialLoginRepository;
+import com.showback.repository.UserRepository;
 import com.showback.security.TokenProvider;
 import com.showback.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,15 @@ public class AuthController {
 
     private final AuthService authService;
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
 
     // kakao
     @GetMapping("/oauth/kakao")
     public ResponseEntity<?> kakaoLogin(HttpServletRequest request){
+
+        String ipAddress = request.getRemoteAddr();
+        String userAgent = request.getHeader("User-Agent");
 
         String code = request.getParameter("code");
 //        System.out.println("------------------------------------------code = " + code);
@@ -42,18 +47,34 @@ public class AuthController {
 
 //        System.out.println("kakdoAccessToken = " + kakaoAccessToken);
 //        return authService.kakaoLogin(kakdoAccessToken);
-        if(socialLoginDTO != null) {
+        if(socialUserIdFromProvider != null) {
 //            return ResponseEntity.ok().body(Map.of("kakaoAccessToken", kakaoAccessToken));
 //            return ResponseEntity.ok().body(token);
-            String ipAddress =  request.getRemoteAddr();
-            String userAgent = request.getHeader("User-Agent");
-            User userEntity = authService.getByCredentials(socialUserIdFromProvider);
-//
-            final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
-            System.out.println("----------------------token = " + token);
-            final UserDTO responseUserDTO = UserDTO.builder()
-                    .username(socialUserIdFromProvider)
-                    .token(token)
+            //231103
+//            String ipAddress =  request.getRemoteAddr();
+//            String userAgent = request.getHeader("User-Agent");
+//            User userEntity = authService.getByCredentials(socialUserIdFromProvider);
+////
+//            final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
+//            System.out.println("----------------------token = " + token);
+//            final UserDTO responseUserDTO = UserDTO.builder()
+//                    .username(socialUserIdFromProvider)
+//                    .token(token)
+//                    .build();
+
+            if (!socialUserIdFromProvider.contains("@")) {
+                // todo
+                User userEntity = userRepository.findByUsername(socialUserIdFromProvider);
+                final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
+                final UserDTO responseUserDTO = UserDTO.builder()
+//                        .username(userDTO.getUsername())
+                        .token(token)
+                        .build();
+                return ResponseEntity.ok().body(responseUserDTO);
+            }
+
+            UserDTO responseUserDTO = UserDTO.builder()
+                    .email(socialUserIdFromProvider)
                     .build();
             return ResponseEntity.ok().body(responseUserDTO);
 

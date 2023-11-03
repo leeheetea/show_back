@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface SocialLoginRepository extends JpaRepository<SocialLogin, Long> {
     SocialLogin findBySocialUserIdFromProvider(String socialUserIdFromProvider);
     SocialLogin findByUser_UserId(Long userId);
+
 }

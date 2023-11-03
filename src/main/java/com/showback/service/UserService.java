@@ -33,6 +33,50 @@ public class UserService {
 //        passwordRepository.save(passwordEntity);
 //        userAuthRepository.save(userAuthEntity);
 
+        User userSocialEntity = userRepository.findByLoginTypeAndUsernameIsNull(1);
+        if(userSocialEntity != null) {
+            userSocialEntity.setUsername(userDTO.getUsername());
+
+            Password passwordEntity = new Password();
+            passwordEntity.setUser(userSocialEntity);
+            passwordEntity.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+            UserAuth userAuthEntity = new UserAuth();
+            userAuthEntity.setUser(userSocialEntity);
+            userAuthEntity.setAuthName(userDTO.getName());
+            userAuthEntity.setAuthEmail(userDTO.getEmail());
+            userAuthEntity.setAuthPhone(userDTO.getPhone());
+            userAuthEntity.setSmsChoice(userDTO.isSmscheck());
+            userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
+
+            userRepository.save(userSocialEntity);
+            passwordRepository.save(passwordEntity);
+            userAuthRepository.save(userAuthEntity);
+
+            for(Map.Entry<String, Boolean> entry : userDTO.getTermsChecked().entrySet()) {
+                String termCode = entry.getKey();
+                Boolean agreed = entry.getValue();
+
+                TermsOfService termsOfService = termsOfServiceRepository.findByTermCode(termCode);
+                if (termsOfService != null) {
+                    UserAgreement userAgreement = new UserAgreement();
+                    userAgreement.setUser(userSocialEntity);
+                    userAgreement.setTermsOfService(termsOfService);
+                    userAgreement.setAgreed(agreed);
+                    userAgreement.setAgreementDate(new Date());
+
+                    userAgreementRepository.save(userAgreement);
+                }
+                else{
+                    throw new RuntimeException("No terms found for termCode: " + termCode);
+                }
+            }
+
+            UserDTO responseUserDTO = new UserDTO();
+            responseUserDTO.setName(userDTO.getName());
+            return responseUserDTO;
+        }
+
         User userEntity = new User();
         userEntity.setUsername(userDTO.getUsername());
 
