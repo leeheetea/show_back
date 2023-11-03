@@ -2,6 +2,7 @@ package com.showback.service;
 
 import com.showback.dto.OrderDTO;
 import com.showback.dto.OrderDetailDTO;
+import com.showback.dto.OrderRequestDTO;
 import com.showback.mapper.OrderDetailMapper;
 import com.showback.mapper.ReservationMapper;
 import com.showback.model.*;
@@ -30,9 +31,7 @@ public class OrderService {
 
 
     @Transactional
-    public Order createOrder(OrderDTO orderDTO, Long userId, Long showId) {
-
-        
+    public Order createOrder(OrderRequestDTO orderRequestDTO, Long userId, Long showId) {
 
 
         return null;
