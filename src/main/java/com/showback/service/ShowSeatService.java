@@ -19,16 +19,6 @@ public class ShowSeatService {
     private final ShowSeatRepository showSeatRepository;
     private final ShowSeatMapper showSeatMapper;
 
-    public Long createShowSeat(ShowSeatDTO showSeatDTO, Long showId){
-
-        ShowSeat showSeat = showSeatMapper.toEntity(showSeatDTO);
-
-
-        showSeatRepository.save(showSeat);
-
-        return 1L;
-    }
-
     public List<ShowSeatDTO> getShowSeats(Long showId, LocalDate date, LocalTime time){
 
         List<ShowSeat> showSeatsByShowAndSchedule =

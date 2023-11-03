@@ -35,7 +35,7 @@ public class Show {
     @JsonManagedReference
     private Venue venue;
 
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<ShowSeat> showSeats = new ArrayList<>();
 

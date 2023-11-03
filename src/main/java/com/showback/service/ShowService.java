@@ -11,10 +11,7 @@ import com.showback.exception.ShowNotFoundException;
 import com.showback.mapper.ShowBannerMapper;
 import com.showback.mapper.ShowMapper;
 import com.showback.mapper.ShowScheduleMapper;
-import com.showback.model.Show;
-import com.showback.model.ShowBanner;
-import com.showback.model.ShowSchedule;
-import com.showback.model.Venue;
+import com.showback.model.*;
 import com.showback.repository.ShowBannerRepository;
 import com.showback.repository.ShowRepository;
 import com.showback.repository.ShowScheduleRepository;
@@ -62,6 +59,17 @@ public class ShowService {
         }
 
         Show show = showMapper.toEntity(showDTO, venue);
+
+        if (venue != null && venue.getSeats() != null) {
+            List<ShowSeat> showSeats = new ArrayList<>();
+            for (Seat seat : venue.getSeats()) {
+                ShowSeat showSeat = new ShowSeat();
+                showSeat.setSeat(seat);
+                showSeat.setShow(show);
+                showSeats.add(showSeat);
+            }
+            show.setShowSeats(showSeats);
+        }
 
         return showRepository.save(show);
     }

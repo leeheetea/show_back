@@ -22,7 +22,7 @@ public class VenueController {
     @PostMapping
     public ResponseEntity<Venue> createVenue(@RequestBody VenueDTO venueDTO){
 
-        Venue venue = venueService.createVenue(venueDTO);
+        Venue venue = venueService.createVenueWithSeats(venueDTO);
 
         return ResponseEntity.ok().body(venue);
     }

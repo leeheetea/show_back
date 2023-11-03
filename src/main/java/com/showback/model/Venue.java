@@ -27,6 +27,7 @@ public class Venue {
     private int seatMaxColumn;
 
     @OneToMany(mappedBy = "venue")
+    @JsonBackReference
     private List<Seat> seats = new ArrayList<>();
 
     @OneToMany(mappedBy = "venue")

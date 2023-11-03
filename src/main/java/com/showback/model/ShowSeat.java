@@ -26,6 +26,7 @@ public class ShowSeat {
 
     @ManyToOne
     @JoinColumn(name = "seat_id")
+    @JsonBackReference
     private Seat seat;
 
     @OneToOne(mappedBy = "showSeat")
