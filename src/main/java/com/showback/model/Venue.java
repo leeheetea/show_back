@@ -27,9 +27,15 @@ public class Venue {
     private int seatMaxColumn;
 
     @OneToMany(mappedBy = "venue")
+    @JsonBackReference
     private List<Seat> seats = new ArrayList<>();
 
     @OneToMany(mappedBy = "venue")
     @JsonBackReference
     private List<Show> shows = new ArrayList<>();
+
+    public void addShow(Show show) {
+        shows.add(show);
+        show.setVenue(this);
+    }
 }
