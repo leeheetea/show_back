@@ -2,7 +2,6 @@ package com.showback.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.showback.dto.ShowBannerDTO;
 import com.showback.dto.ShowDTO;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -111,4 +109,37 @@ public class ShowService {
         return show.getShowId();
     }
 
+    @Transactional
+    public List<ShowDTO> searchShows(String keyword, List<String> types) throws JsonProcessingException {
+
+//        List<ShowDTO> results = showRepository.searchShowsByKeyword(keyword);
+//
+//        if (types != null && !types.isEmpty()) {
+//            results = filterShowsByType(results, types);
+//        }
+//        return results;
+
+        List<Show> shows = showRepository.searchShowsByKeyword(keyword);
+        List<ShowDTO> results = new ArrayList<>();
+        for (Show show : shows) {
+            results.add(showMapper.toDTO(show));
+        }
+
+        if (types != null && !types.isEmpty()) {
+            results = filterShowsByType(results, types);
+        }
+        return results;
+    }
+
+    private List<ShowDTO> filterShowsByType(List<ShowDTO> results, List<String> types) {
+        List<ShowDTO> filteredResults = new ArrayList<>();
+        for (ShowDTO show : results) {
+            String showType = show.getType();
+
+            if (types.contains(showType)) {
+                filteredResults.add(show);
+            }
+        }
+        return filteredResults;
+    }
 }

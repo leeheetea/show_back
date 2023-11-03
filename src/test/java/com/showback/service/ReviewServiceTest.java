@@ -59,7 +59,7 @@ public class ReviewServiceTest {
         ReviewDTO reviewDTO  = new ReviewDTO();
         reviewDTO.setReviewId(2L);
         reviewDTO.setReviewGrade(4);
-        reviewDTO.setReviewText("testtest good!");
+        reviewDTO.setReviewText("test test good!");
         reviewDTO.setReviewTimestamp(LocalDateTime.now());
         reviewDTO.setShowId(1101L);
         reviewDTO.setShowId(10L);
@@ -68,4 +68,6 @@ public class ReviewServiceTest {
         System.out.println("reviewDTO = " + reviewDTO);
 
     }
+
+
 }

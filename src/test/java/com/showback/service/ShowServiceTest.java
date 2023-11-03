@@ -35,10 +35,6 @@ class ShowServiceTest {
         assertThat(result.getTitle()).isEqualTo("Test Show");
     }
 
-
-    @Test
-    void testFindShowDTOBy
-
     @Test
     void testCreateShow() throws JsonProcessingException {
         ShowDTO showDTO = new ShowDTO();

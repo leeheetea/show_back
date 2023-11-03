@@ -67,4 +67,5 @@ public class ShowController {
 
         return ResponseEntity.ok().body(showSeats);
     }
+
 }

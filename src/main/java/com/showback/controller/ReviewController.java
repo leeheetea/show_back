@@ -8,7 +8,6 @@ import com.showback.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +29,6 @@ public class ReviewController {
         if(bindingResult.hasErrors()){
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
-
             String token = request.getHeader("Authorization").replace("Bearer ", "");
             System.out.println("--token = " + token);
             Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
@@ -45,7 +43,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{showId}")
-    public ResponseEntity<List<ReviewDTO>> updateReview(@PathVariable("showId") Long showId){
+    public ResponseEntity<List<ReviewDTO>> ReadReview(@PathVariable("showId") Long showId){
         List<ReviewDTO> reviewDTOList = reviewService.findReviewDTOById(showId);
         return ResponseEntity.ok().body(reviewDTOList);
     }
