@@ -188,4 +188,14 @@ public class UserController {
         return  ResponseEntity.badRequest().body("User not found");
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        String logoutUsername = userService.logout(userDTO.getToken());
+        if(logoutUsername != null) {
+            return ResponseEntity.ok().body(logoutUsername);
+        } else {
+            return ResponseEntity.badRequest().body("Error");
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.showback.service;
 import com.showback.dto.UserDTO;
 import com.showback.model.*;
 import com.showback.repository.*;
+import com.showback.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +28,8 @@ public class UserService {
     private final UserAgreementRepository userAgreementRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    private final TokenProvider tokenProvider;
 
     // join
     public UserDTO register(UserDTO userDTO) {
@@ -241,6 +245,25 @@ public class UserService {
                     .build();
         }
 
+        return null;
+    }
+
+    public String logout(String token) {
+        String userId = tokenProvider.validateAndGetUserId(token);
+        if(userId != null) {
+            User user = userRepository.findById(Long.parseLong(userId))
+                    .orElseThrow(()-> new EntityNotFoundException("User not found with id: " + userId));
+            if (user != null) {
+                LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(user);
+                if(lastLoginLog != null) {
+                    lastLoginLog.setLogoutTime(new Date());
+                    lastLoginLog.setAccountStatus(false);
+                    loginLogRepository.save(lastLoginLog);
+                    return user.getUsername();
+                }
+            }
+        }
+        // logout fail
         return null;
     }
 }
