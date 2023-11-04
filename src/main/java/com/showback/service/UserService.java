@@ -5,6 +5,7 @@ import com.showback.model.*;
 import com.showback.repository.*;
 import com.showback.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -265,6 +266,20 @@ public class UserService {
         }
         // logout fail
         return null;
+    }
+
+    // token validation check
+    public boolean isTokenValid(String token){
+        String userId = tokenProvider.validateAndGetUserId(token);
+        if(userId != null) {
+            User user = userRepository.findById(Long.parseLong(userId))
+                    .orElseThrow(()-> new EntityNotFoundException("User not found with id: " + userId));
+            LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(user);
+            if(lastLoginLog != null && lastLoginLog.getAccountStatus()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

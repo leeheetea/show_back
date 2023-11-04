@@ -16,6 +16,8 @@ import com.showback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,16 +41,20 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@PropertySource("classpath:kakao.properties")
 public class AuthService {
 
     private final SocialLoginRepository socialLoginRepository;
     private final UserRepository userRepository;
     private final LoginLogRepository loginLogRepository;
 
-    String KAKAO_CLINET_ID = "98fb1054fadbc801e5b9337e8492549d";
+    @Value("${kakao.client.id}")
+    String KAKAO_CLINET_ID;
+    @Value("${kakao.client.secret}")
+    String KAKAO_CLIENT_SECRET;
     String KAKAO_REDIRECT_URI = "http://localhost:3000/user/oauth/kakao";
     String KAKAO_TOKEN_URI = "https://kauth.kakao.com/oauth/token";
-    String KAKAO_CLIENT_SECRET = "Q3ZilYgFgGorxTFqcSds7r30RdTuaj5w";
+
 
     // 사용자 정보가져오기
     String KAKAO_USER_DATA_URI = "https://kapi.kakao.com/v2/user/me";
