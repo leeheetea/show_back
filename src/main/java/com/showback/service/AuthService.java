@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.showback.dto.SocialLoginDTO;
+import com.showback.model.LoginLog;
 import com.showback.model.Password;
 import com.showback.model.SocialLogin;
 import com.showback.model.User;
+import com.showback.repository.LoginLogRepository;
 import com.showback.repository.SocialLoginRepository;
 import com.showback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Optional;
 
 
@@ -40,6 +43,7 @@ public class AuthService {
 
     private final SocialLoginRepository socialLoginRepository;
     private final UserRepository userRepository;
+    private final LoginLogRepository loginLogRepository;
 
     String KAKAO_CLINET_ID = "98fb1054fadbc801e5b9337e8492549d";
     String KAKAO_REDIRECT_URI = "http://localhost:3000/user/oauth/kakao";
@@ -133,15 +137,42 @@ public class AuthService {
         }
     }
 
-    public User getByCredentials(final String username){
+    public User getByCredentials(final String username, String ipAddress, String userAgent){
         final User loginUser = userRepository.findByUsername(username);
+        LoginLog loginLog = new LoginLog();
+        loginLog.setUser(loginUser);
+        loginLog.setIpAddress(ipAddress);
+        loginLog.setUserAgent(userAgent);
+        loginLog.setLoginTime(new Date());
 
-        if(loginUser != null && loginUser.getLoginType() == 1) {
-            return loginUser;
+        LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(loginUser);
+
+        if(loginUser != null) {
+            if(lastLoginLog == null || !lastLoginLog.getAccountStatus()) {
+                loginLog.setAccountStatus(true);
+                loginLog.setLoginFailureCount(lastLoginLog == null ? 0 : lastLoginLog.getLoginFailureCount());
+                loginLogRepository.save(loginLog);
+                return  loginUser;
+            } else {
+                loginLog.setLoginFailureCount(0);
+                loginLog.setAccountStatus(true);
+                loginLogRepository.save(loginLog);
+                return loginUser;
+            }
+        } else {
+            if(lastLoginLog != null) {
+                loginLog.setLoginFailureCount(lastLoginLog.getLoginFailureCount() + 1);
+            } else {
+                loginLog.setLoginFailureCount(1);
+            }
+            loginLog.setAccountStatus(false);
+            loginLogRepository.save(loginLog);
+            return null;
         }
 
-        return null;
+//        return userRepository.findByUsername(username);
     }
+
 
     public SocialLogin socialLogout(Long userId){
         final SocialLogin socialLogin = socialLoginRepository.findByUser_UserId(userId);

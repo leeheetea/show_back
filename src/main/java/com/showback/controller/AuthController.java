@@ -4,8 +4,6 @@ import com.showback.dto.SocialLoginDTO;
 import com.showback.dto.UserDTO;
 import com.showback.model.SocialLogin;
 import com.showback.model.User;
-import com.showback.repository.SocialLoginRepository;
-import com.showback.repository.UserRepository;
 import com.showback.security.TokenProvider;
 import com.showback.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -26,8 +23,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final TokenProvider tokenProvider;
-    private final UserRepository userRepository;
-
 
     // kakao
     @GetMapping("/oauth/kakao")
@@ -63,11 +58,11 @@ public class AuthController {
 //                    .build();
 
             if (!socialUserIdFromProvider.contains("@")) {
-                // todo
-                User userEntity = userRepository.findByUsername(socialUserIdFromProvider);
+                // socialUserIdFromProvider = username
+                User userEntity = authService.getByCredentials(socialUserIdFromProvider, ipAddress, userAgent);
                 final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
                 final UserDTO responseUserDTO = UserDTO.builder()
-//                        .username(userDTO.getUsername())
+                        .username(socialUserIdFromProvider)
                         .token(token)
                         .build();
                 return ResponseEntity.ok().body(responseUserDTO);
