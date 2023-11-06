@@ -49,9 +49,9 @@ public class AuthService {
     private final LoginLogRepository loginLogRepository;
 
     @Value("${kakao.client.id}")
-    String KAKAO_CLINET_ID;
+    private String KAKAO_CLINET_ID;
     @Value("${kakao.client.secret}")
-    String KAKAO_CLIENT_SECRET;
+    private String KAKAO_CLIENT_SECRET;
     String KAKAO_REDIRECT_URI = "http://localhost:3000/user/oauth/kakao";
     String KAKAO_TOKEN_URI = "https://kauth.kakao.com/oauth/token";
 
