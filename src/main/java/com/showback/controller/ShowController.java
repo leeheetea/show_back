@@ -1,11 +1,13 @@
 package com.showback.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.showback.dto.ShowBannerDTO;
 import com.showback.dto.ShowDTO;
 import com.showback.dto.ShowScheduleDTO;
 import com.showback.dto.ShowSeatDTO;
 import com.showback.exception.ShowNotFoundException;
 import com.showback.model.Show;
+import com.showback.model.ShowBanner;
 import com.showback.model.ShowSchedule;
 import com.showback.model.ShowSeat;
 import com.showback.service.ShowSeatService;
@@ -69,9 +71,19 @@ public class ShowController {
         return ResponseEntity.ok().body(showSeats);
     }
 
-//    @GetMapping("/banner")
-//    public ResponseEntity<?> getShowBanner(
-//            @PathVariable Long showId,
-//
-//    )
+    @GetMapping("/banner")
+    public ResponseEntity<?> getShowBanner(){
+
+        List<ShowBannerDTO> allShowBanner = showService.findAllShowBanner();
+
+        return ResponseEntity.ok().body(allShowBanner);
+    }
+
+    @GetMapping("/small-banner")
+    public ResponseEntity<?> getShowSmallBanner(){
+
+        List<ShowBannerDTO> allShowBanner = showService.findAllSmallBanner();
+
+        return ResponseEntity.ok().body(allShowBanner);
+    }
 }

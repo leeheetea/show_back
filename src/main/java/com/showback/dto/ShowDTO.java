@@ -29,6 +29,8 @@ public class ShowDTO {
 
     private Long venueId;
 
+    private String venueName;
+
     private List<ShowScheduleDTO> showSchedules;
 
     private ShowBannerDTO showBanners;
