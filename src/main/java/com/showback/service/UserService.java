@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -129,33 +130,30 @@ public class UserService {
     public User getByCredentials(final String username, final String password, final PasswordEncoder passwordEncoder, String ipAddress, String userAgent){
         final User loginUser = userRepository.findByUsername(username);
         final Password loginPassword = passwordRepository.findByUser_UserId(loginUser.getUserId());
+
+        LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(loginUser);
+        int lastFailureCount = (lastLoginLog != null) ? lastLoginLog.getLoginFailureCount() : 0;
+
         LoginLog loginLog = new LoginLog();
         loginLog.setUser(loginUser);
         loginLog.setIpAddress(ipAddress);
         loginLog.setUserAgent(userAgent);
         loginLog.setLoginTime(new Date());
 
-        LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(loginUser);
-
         if(passwordEncoder.matches(password, loginPassword.getUserPassword())) {
-            if(lastLoginLog == null || !lastLoginLog.getAccountStatus()) {
-                loginLog.setAccountStatus(true);
+            loginLog.setAccountStatus(true);
+            if(lastLoginLog != null && lastLoginLog.getLogoutTime() != null) {
                 loginLog.setLoginFailureCount(0);
-                loginLogRepository.save(loginLog);
-                return  loginUser;
+            } else if(lastLoginLog != null && !lastLoginLog.getAccountStatus()) {
+                loginLog.setLoginFailureCount(lastFailureCount);
             } else {
-                loginLog.setAccountStatus(true);
-                loginLog.setLoginFailureCount(lastLoginLog.getLoginFailureCount());
-                loginLogRepository.save(loginLog);
-                return loginUser;
+                loginLog.setLoginFailureCount(0);
             }
+            loginLogRepository.save(loginLog);
+            return loginUser;
         } else {
-            if(lastLoginLog != null) {
-                loginLog.setLoginFailureCount(lastLoginLog.getLoginFailureCount() + 1);
-            } else {
-                loginLog.setLoginFailureCount(1);
-            }
             loginLog.setAccountStatus(false);
+            loginLog.setLoginFailureCount(lastFailureCount + 1);
             loginLogRepository.save(loginLog);
             return null;
         }
@@ -280,6 +278,18 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    // login failure count
+    public int getLastLoginFailureCount(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) return 0; // Or handle this case differently if necessary
+
+        LoginLog lastLoginlog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(user);
+        if (lastLoginlog != null) {
+            return lastLoginlog.getLoginFailureCount();
+        }
+        return 0;
     }
 }
 

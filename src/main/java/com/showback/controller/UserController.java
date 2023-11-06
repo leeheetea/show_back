@@ -69,9 +69,8 @@ public class UserController {
                     .build();
             return ResponseEntity.ok().body(responseUserDTO);
         } else {
-            // temp
-            UserDTO tempDTO = UserDTO.builder().build();
-            return ResponseEntity.badRequest().body(tempDTO);
+            int lastFailureCount = userService.getLastLoginFailureCount(userDTO.getUsername());
+            return ResponseEntity.badRequest().body(lastFailureCount);
         }
     }
 
