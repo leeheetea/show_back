@@ -17,10 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 72131f5ee56ea4b432ade6ccf90eb54d7381bfeb
 @RestController("/order")
 @RequiredArgsConstructor
 public class OrderController {

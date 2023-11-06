@@ -33,53 +33,6 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderRequestDTO orderRequestDTO, Long userId, Long showId) {
 
-
-<<<<<<< HEAD
-        UserAuth userAuth = userAuthRepository.findByUserId(userId);
-        if(userAuth != null){
-            order.setUserAuth(userAuth);
-        }
-
-        if (orderDTO.getOrderDetails() != null) {
-            List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
-                    .map(orderDetailMapper::toEntity)
-                    .collect(Collectors.toList());
-            order.setOrderDetails(orderDetails);
-        }
-
-        //예약생성
-       if (orderDTO.getReservation() != null){
-           Reservation reservation = reservationMapper.toEntity(orderDTO.getReservation());
-           order.setReservation(reservation);
-       } else {
-           Show show = showRepository.findById(showId)
-                   .orElseThrow(() -> new EntityNotFoundException("Show with ID " + showId + " not found."));
-
-           List<OrderDetail> orderDetails = orderDTO.getOrderDetails().stream()
-                   .map(orderDetailMapper::toEntity)
-                   .collect(Collectors.toList());
-
-           int reservationPrice = 0;
-           for(OrderDetail orderDetail : orderDetails ){
-               reservationPrice += orderDetail.getFinalPrice();
-           }
-
-           Reservation reservation = Reservation.builder()
-                   .reservationDate(new Date())
-                   .reservationState("입금 대기중")
-                   .reservationShowName(show.getTitle())
-                   .reservationShowVenue(show.getVenue().getVenueName())
-                   .reservationPrice(reservationPrice)
-                   .reservationTicketAmount(orderDTO.getTicketAmount())
-                   .order(order)
-                   .show(show)
-                   .build();
-
-           reservationRepository.save(reservation);
-       }
-       return order;
-=======
-        return null;
->>>>>>> 72131f5ee56ea4b432ade6ccf90eb54d7381bfeb
+       return null;
     }
 }

@@ -30,7 +30,6 @@ class ShowServiceTest {
         Show show = new Show();
         show.setTitle("Test Show");
         Show savedShow = showRepository.save(show);
-
         ShowDTO result = showService.findShowDTOById(savedShow.getShowId());
         assertThat(result.getTitle()).isEqualTo("Test Show");
     }
