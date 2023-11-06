@@ -68,4 +68,10 @@ public class ShowController {
 
         return ResponseEntity.ok().body(showSeats);
     }
+
+//    @GetMapping("/banner")
+//    public ResponseEntity<?> getShowBanner(
+//            @PathVariable Long showId,
+//
+//    )
 }
