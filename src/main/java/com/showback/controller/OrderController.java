@@ -1,6 +1,7 @@
 package com.showback.controller;
 
 import com.showback.dto.OrderDTO;
+import com.showback.dto.OrderRequestDTO;
 import com.showback.model.Order;
 import com.showback.security.TokenProvider;
 import com.showback.service.OrderService;
@@ -10,10 +11,16 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 72131f5ee56ea4b432ade6ccf90eb54d7381bfeb
 @RestController("/order")
 @RequiredArgsConstructor
 public class OrderController {
@@ -23,14 +30,14 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> createOrder(
-            OrderDTO orderDTO,
+            @RequestBody OrderRequestDTO orderRequestDTO,
             HttpServletRequest request,
             @Param("showId") Long showId){
 
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
 
-        Order order = orderService.createOrder(orderDTO, userId, showId);
+        Order order = orderService.createOrder(orderRequestDTO, userId, showId);
 
         return ResponseEntity.ok().body(order);
     }

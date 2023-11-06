@@ -20,7 +20,7 @@ public class ShowBanner {
 
     private String smallBannerUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "show_id")
     @JsonBackReference
     private Show show;

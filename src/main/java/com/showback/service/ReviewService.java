@@ -22,7 +22,6 @@ import java.util.List;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final ShowRepository showRepository;
     private final UserAuthRepository userAuthRepository;
     private final ReviewMapper reviewMapper;
 
@@ -68,5 +67,15 @@ public class ReviewService {
 
         return review.getReviewId();
 
+    }
+
+    public boolean deleteReview(Review review) throws  JsonProcessingException{
+        try {
+            reviewRepository.delete(review);
+            return true;
+        } catch (Exception e) {
+            System.out.println( "리뷰 삭제 실패: " + e.getMessage());
+            return false;
+        }
     }
 }

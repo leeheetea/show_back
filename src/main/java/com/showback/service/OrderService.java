@@ -2,6 +2,7 @@ package com.showback.service;
 
 import com.showback.dto.OrderDTO;
 import com.showback.dto.OrderDetailDTO;
+import com.showback.dto.OrderRequestDTO;
 import com.showback.mapper.OrderDetailMapper;
 import com.showback.mapper.ReservationMapper;
 import com.showback.model.*;
@@ -30,13 +31,10 @@ public class OrderService {
 
 
     @Transactional
-    public Order createOrder(OrderDTO orderDTO, Long userId, Long showId){
-        Order order = new Order();
+    public Order createOrder(OrderRequestDTO orderRequestDTO, Long userId, Long showId) {
 
-        order.setTicketAmount(orderDTO.getTicketAmount());
-        order.setOrderState(orderDTO.getOrderState());
-        order.setOrderDate(new Date());
 
+<<<<<<< HEAD
         UserAuth userAuth = userAuthRepository.findByUserId(userId);
         if(userAuth != null){
             order.setUserAuth(userAuth);
@@ -80,5 +78,8 @@ public class OrderService {
            reservationRepository.save(reservation);
        }
        return order;
+=======
+        return null;
+>>>>>>> 72131f5ee56ea4b432ade6ccf90eb54d7381bfeb
     }
 }

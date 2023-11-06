@@ -3,6 +3,7 @@ package com.showback.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.showback.dto.ShowBannerDTO;
 import com.showback.dto.ShowDTO;
 import com.showback.model.Show;
 import com.showback.model.ShowBanner;
@@ -10,6 +11,8 @@ import com.showback.model.ShowSchedule;
 import com.showback.model.Venue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +24,9 @@ public class ShowMapper {
     private final ShowBannerMapper showBannerMapper;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     public Show toEntity(ShowDTO showDTO, Venue venue) throws JsonProcessingException {
+
         if (showDTO == null) {
             return null;
         }
@@ -37,12 +42,6 @@ public class ShowMapper {
         show.setPeriod(showDTO.getPeriod());
         show.setPrice(showDTO.getPrice());
 
-        // VenueDTO를 Venue 엔터티로 변환
-        if (venue != null) {
-            show.setVenue(venue);
-        }
-
-        // ShowSchedule과 연관관계 매핑
         if (showDTO.getShowSchedules() != null) {
 
             List<ShowSchedule> schedules = showDTO.getShowSchedules().stream()
@@ -52,19 +51,25 @@ public class ShowMapper {
             show.setShowSchedules(schedules);
         }
 
-        // ShowBanner와 연관관계 매핑
         if (showDTO.getShowBanners() != null) {
-            List<ShowBanner> showBanners = showDTO.getShowBanners().stream()
-                    .map(showBannerMapper::toEntity)
-                    .collect(Collectors.toList());
-            showBanners.forEach(showbanner -> showbanner.setShow(show));
-            show.setShowBanners(showBanners);
+            ShowBanner showBanner = showBannerMapper.toEntity(showDTO.getShowBanners());
+            show.setShowBanner(showBanner);
+        }
+
+        if (venue != null) {
+            show.setVenue(venue);
+            venue.addShow(show);
         }
 
         return show;
     }
 
+    @Transactional
     public ShowDTO toDTO(Show show) throws JsonProcessingException {
+
+        ShowBanner showBanner = show.getShowBanner();
+        ShowBannerDTO showBannerDTO = showBannerMapper.toDTO(showBanner);
+
         if (show == null) {
             return null;
         }
@@ -84,9 +89,7 @@ public class ShowMapper {
                 .showSchedules(show.getShowSchedules().stream()
                         .map(showScheduleMapper::toDTO)
                         .collect(Collectors.toList()))
-                .showBanners(show.getShowBanners().stream()
-                        .map(showBannerMapper::toDTO)
-                        .collect(Collectors.toList()))
+                .showBanners(showBannerDTO)
                 .build();
     }
 }

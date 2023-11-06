@@ -11,6 +11,7 @@ import com.showback.model.ShowSeat;
 import com.showback.service.ShowSeatService;
 import com.showback.service.ShowService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -57,11 +58,11 @@ public class ShowController {
         return ResponseEntity.ok().body(showId);
     }
 
-    @GetMapping("seat/{showId}")
+    @GetMapping("/seat/{showId}")
     public ResponseEntity<?> getShowSeat(
             @PathVariable Long showId,
-            @RequestParam LocalDate date,
-            @RequestParam LocalTime time) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time) {
 
         List<ShowSeatDTO> showSeats = showSeatService.getShowSeats(showId, date, time);
 
