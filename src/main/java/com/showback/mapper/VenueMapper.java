@@ -6,6 +6,7 @@ import com.showback.dto.VenueDTO;
 import com.showback.model.Seat;
 import com.showback.model.Venue;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
