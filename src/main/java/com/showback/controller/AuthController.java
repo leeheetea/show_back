@@ -1,5 +1,6 @@
 package com.showback.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.showback.dto.SocialLoginDTO;
 import com.showback.dto.UserDTO;
 import com.showback.model.SocialLogin;
@@ -114,5 +115,43 @@ public class AuthController {
     public ResponseEntity<?> kakaoLogoutWithAccount() {
         URI kakaoLogoutUri = authService.initiateKakaoLogout();
         return ResponseEntity.status(HttpStatus.FOUND).location(kakaoLogoutUri).build();
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
+
+    @PostMapping("/oauth/naver")
+    public ResponseEntity<?> naverLogin(@RequestBody SocialLoginDTO socialLoginDTO, HttpServletRequest request) throws JsonProcessingException {
+        String ipAddress = request.getRemoteAddr();
+        String userAgent = request.getHeader("User-Agent");
+        SocialLoginDTO getAccessToken = authService.getNaverAccessToken(socialLoginDTO.getCode(), socialLoginDTO.getState());
+
+        if(getAccessToken != null) {
+            String userEmail = authService.getNaverUserProfile(getAccessToken.getAccess_token());
+            if(userEmail != null) {
+                String usernameOrEmail = authService.naverLogin(userEmail, getAccessToken);
+
+                if (!usernameOrEmail.contains("@")) {
+                    // socialUserIdFromProvider = username
+                    User userEntity = authService.getByCredentials(usernameOrEmail, ipAddress, userAgent);
+                    final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
+                    final UserDTO responseUserDTO = UserDTO.builder()
+                            .username(usernameOrEmail)
+                            .token(token)
+                            .build();
+                    return ResponseEntity.ok().body(responseUserDTO);
+                }
+
+                UserDTO responseUserDTO = UserDTO.builder()
+                        .email(usernameOrEmail)
+                        .build();
+                return ResponseEntity.ok().body(responseUserDTO);
+
+            }
+        }
+
+        return null;
+
     }
 }

@@ -3,9 +3,11 @@ package com.showback.service;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.showback.dto.SocialLoginDTO;
+import com.showback.dto.UserDTO;
 import com.showback.model.LoginLog;
 import com.showback.model.Password;
 import com.showback.model.SocialLogin;
@@ -63,6 +65,11 @@ public class AuthService {
     String KAKAO_USER_LOGOUT_URI = "https://kapi.kakao.com/v1/user/logout";
     String KAKAO_OAUTH_LOGOUT_URI = "https://kauth.kakao.com/oauth/logout";
     String KAKAO_LOGOUT_REDIRECT_URI = "http://localhost:3000/user/oauth/kakao/logout";
+
+    @Value("${naver.client.id}")
+    private String NAVER_CLINET_ID;
+    @Value("${naver.client.secret}")
+    private String NAVER_CLIENT_SECRET;
 
 
     public SocialLoginDTO  getKakaoAccessToken(String code) {
@@ -135,7 +142,8 @@ public class AuthService {
             userRepository.save(user);
 
             socialLogin.setAccessToken(socialLoginDTO.getAccess_token());
-            socialLogin.setSocialCode(payloadJson.getString("iss"));
+//            socialLogin.setSocialCode(payloadJson.getString("iss"));
+            socialLogin.setSocialCode("kakao");
             socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
             socialLogin.setUser(user);
             socialLoginRepository.save(socialLogin);
@@ -196,6 +204,85 @@ public class AuthService {
                 .queryParam("client_id", KAKAO_CLINET_ID)
                 .queryParam("logout_redirect_uri", KAKAO_LOGOUT_REDIRECT_URI);
         return builder.build().toUri();
+    }
+
+
+    /////////////////////////////////////////////////////////////////
+
+        public SocialLoginDTO getNaverAccessToken(String code, String state){
+        String tokenUrl = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id="
+                + NAVER_CLINET_ID + "&client_secret=" + NAVER_CLIENT_SECRET + "&code=" + code + "&state=" + state;
+//        System.out.println("tokenUrl = " + tokenUrl);
+        RestTemplate restTemplate = new RestTemplate();
+        String tokenResponse = restTemplate.getForObject(tokenUrl, String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            SocialLoginDTO socialLoginDTO = objectMapper.readValue(tokenResponse, SocialLoginDTO.class);
+
+            System.out.println("socialLoginDTO.getAccess_token() = " + socialLoginDTO.getAccess_token());
+            System.out.println("socialLoginDTO.getRefresh_token() = " + socialLoginDTO.getRefresh_token());
+            System.out.println("socialLoginDTO.getToken_type() = " + socialLoginDTO.getToken_type());
+            System.out.println("socialLoginDTO.getExpires_in() = " + socialLoginDTO.getExpires_in());
+
+            return socialLoginDTO;
+        } catch (JsonProcessingException e) {
+            log.error("Error Kakao Access Token", e);
+            return null;
+        }
+    }
+
+    public String getNaverUserProfile(String accessToken) throws JsonProcessingException {
+        String apiURL = "https://openapi.naver.com/v1/nid/me";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = restTemplate.exchange(apiURL, HttpMethod.GET, entity, String.class);
+        String responseBody = responseEntity.getBody();
+        System.out.println("responseBody = " + responseBody);
+        //responseBody = {
+        // "resultcode":"00",
+        // "message":"success",
+        // "response":{"id":"wjEEDI6Flzc8YnQCt0pOe-6VvaBH0Arf44tW9UlUK8M","email":"toyandy@hanmir.com","mobile":"010-6266-0491","mobile_e164":"+821062660491","name":"\uae40\uc7ac\ud6c8","birthyear":"1995"}}
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(responseBody);
+        JsonNode responseNode = rootNode.path("response");
+        String email = responseNode.path("email").asText();
+        System.out.println("email = " + email);
+
+        return email;
+    }
+
+    public String naverLogin(String email, SocialLoginDTO socialLoginDTO) {
+        SocialLogin socialLogin = new SocialLogin();
+
+        SocialLogin existingSocialLogin = socialLoginRepository.findBySocialUserIdFromProvider(email);
+        // if naver join already done
+        if (existingSocialLogin != null) {
+            System.out.println("----already naver join");
+            // token update ?
+            existingSocialLogin.setAccessToken(socialLoginDTO.getAccess_token());
+            socialLoginRepository.save(existingSocialLogin);
+            User associatedUser = existingSocialLogin.getUser();
+
+            return associatedUser.getUsername();
+        }  else {
+            System.out.println("----new naver join");
+            User user = new User();
+            user.setLoginType(1);
+            userRepository.save(user);
+
+            socialLogin.setAccessToken(socialLoginDTO.getAccess_token());
+            socialLogin.setSocialCode("naver");
+            socialLogin.setSocialUserIdFromProvider(email);
+            socialLogin.setUser(user);
+            socialLoginRepository.save(socialLogin);
+            return email;
+        }
     }
 
 }
