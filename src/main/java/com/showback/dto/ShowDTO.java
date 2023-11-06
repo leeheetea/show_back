@@ -31,5 +31,5 @@ public class ShowDTO {
 
     private List<ShowScheduleDTO> showSchedules;
 
-    private List<ShowBannerDTO> showBanners;
+    private ShowBannerDTO showBanners;
 }

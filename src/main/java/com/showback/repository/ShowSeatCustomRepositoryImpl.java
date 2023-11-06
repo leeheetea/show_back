@@ -3,6 +3,7 @@ package com.showback.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.showback.model.ShowSeat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Time;
@@ -19,7 +20,7 @@ import static com.showback.model.QShowSeat.showSeat;
 @RequiredArgsConstructor
 public class ShowSeatCustomRepositoryImpl implements ShowSeatCustomRepository  {
 
-    private JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public List<ShowSeat> findShowSeatsByShowAndSchedule(Long showId, LocalDate showDate, LocalTime showTime) {
