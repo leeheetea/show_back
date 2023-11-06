@@ -137,15 +137,15 @@ public class UserService {
 
         LoginLog lastLoginLog = loginLogRepository.findTopByUserOrderByLoginTimeDesc(loginUser);
 
-        if(loginUser != null && passwordEncoder.matches(password, loginPassword.getUserPassword())) {
+        if(passwordEncoder.matches(password, loginPassword.getUserPassword())) {
             if(lastLoginLog == null || !lastLoginLog.getAccountStatus()) {
                 loginLog.setAccountStatus(true);
-                loginLog.setLoginFailureCount(lastLoginLog == null ? 0 : lastLoginLog.getLoginFailureCount());
+                loginLog.setLoginFailureCount(0);
                 loginLogRepository.save(loginLog);
                 return  loginUser;
             } else {
-                loginLog.setLoginFailureCount(0);
                 loginLog.setAccountStatus(true);
+                loginLog.setLoginFailureCount(lastLoginLog.getLoginFailureCount());
                 loginLogRepository.save(loginLog);
                 return loginUser;
             }
@@ -268,7 +268,7 @@ public class UserService {
         return null;
     }
 
-    // token validation check
+    // token validation check 동시로그인 방지 추가
     public boolean isTokenValid(String token){
         String userId = tokenProvider.validateAndGetUserId(token);
         if(userId != null) {
