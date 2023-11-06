@@ -51,7 +51,7 @@ public class Show {
     @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShowSchedule> showSchedules = new ArrayList<>();
 
+    @OneToOne(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ShowBanner> showBanners = new ArrayList<>();
+    private ShowBanner showBanner;
 }

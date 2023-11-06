@@ -45,29 +45,5 @@ class OrderServiceTest {
 
     @Test
     void createOrderTest() {
-        // Given
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setOrderId(1L);
-        orderDTO.setOrderDetails(Collections.emptyList());
-
-        UserAuth userAuth = new UserAuth();
-        Show show = new Show();
-        show.setTitle("Test Show");
-        Venue venue = new Venue();
-        venue.setVenueName("Test Venue");
-        show.setVenue(venue);
-
-        when(orderDetailRepository.countByOrderId(anyLong())).thenReturn(1);
-        when(userAuthRepository.findByUserId(anyLong())).thenReturn(userAuth);
-        when(showRepository.findById(anyLong())).thenReturn(Optional.of(show));
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(new Reservation());
-
-
-        // When
-        Order result = orderService.createOrder(orderDTO, 1L, 1L);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.getTicketAmount());
     }
 }

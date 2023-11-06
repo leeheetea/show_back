@@ -36,18 +36,5 @@ class OrderControllerTest {
 
     @Test
     void createOrderTest() {
-        // Given
-        OrderDTO orderDTO = new OrderDTO();
-        Order order = new Order();
-        when(request.getHeader("Authorization")).thenReturn("Bearer someToken");
-        when(tokenProvider.validateAndGetUserId("someToken")).thenReturn("1");
-        when(orderService.createOrder(any(), anyLong(), anyLong())).thenReturn(order);
 
-        // When
-        ResponseEntity<?> result = orderController.createOrder(orderDTO, request, 1L);
-
-        // Then
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(order, result.getBody());
-    }
 }

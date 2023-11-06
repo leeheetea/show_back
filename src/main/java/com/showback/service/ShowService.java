@@ -107,15 +107,15 @@ public class ShowService {
 
         List<ShowBanner> showBanners = new ArrayList<>();
 
-        for (ShowBannerDTO dto : showDTO.getShowBanners()) {
-            if (dto.getShowId() != null) {
-                ShowBanner existingBanner = showBannerRepository.findById(dto.getShowId())
-                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-                showBanners.add(existingBanner);
-            } else {
-                showBanners.add(showBannerMapper.toEntity(dto));
-            }
-        }
+//        for (ShowBannerDTO dto : showDTO.getShowBanners()) {
+//            if (dto.getShowId() != null) {
+//                ShowBanner existingBanner = showBannerRepository.findById(dto.getShowId())
+//                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
+//                showBanners.add(existingBanner);
+//            } else {
+//                showBanners.add(showBannerMapper.toEntity(dto));
+//            }
+//        }
         return show.getShowId();
     }
 

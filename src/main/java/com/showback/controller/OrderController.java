@@ -1,6 +1,7 @@
 package com.showback.controller;
 
 import com.showback.dto.OrderDTO;
+import com.showback.dto.OrderRequestDTO;
 import com.showback.model.Order;
 import com.showback.security.TokenProvider;
 import com.showback.service.OrderService;
@@ -26,14 +27,14 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> createOrder(
-            @RequestBody OrderDTO orderDTO,
+            @RequestBody OrderRequestDTO orderRequestDTO,
             HttpServletRequest request,
             @Param("showId") Long showId){
 
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
 
-        Order order = orderService.createOrder(orderDTO, userId, showId);
+        Order order = orderService.createOrder(orderRequestDTO, userId, showId);
 
         return ResponseEntity.ok().body(order);
     }
