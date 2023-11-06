@@ -27,8 +27,8 @@ public class ReviewMapper {
         review.setReviewGrade(reviewDTO.getReviewGrade());
         review.setReviewText(reviewDTO.getReviewText());
         review.setReviewTimestamp(reviewDTO.getReviewTimestamp());
-        if (reviewDTO.getAuthId() != null) {
-            UserAuth userAuth = userAuthRepository.findById(reviewDTO.getAuthId()).orElse(null);
+        if (reviewDTO.getAuthEmail() != null) {
+            UserAuth userAuth = userAuthRepository.findByAuthEmail(reviewDTO.getAuthEmail());
             review.setUserAuth(userAuth);
         }
         if (reviewDTO.getShowId() != null) {

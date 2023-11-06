@@ -40,7 +40,7 @@ public class ReviewService {
             }
             // Check if userAuth is not null
             if (review.getUserAuth() != null) {
-                reviewDTO.setAuthId(review.getUserAuth().getAuthId());
+                reviewDTO.setAuthEmail(review.getUserAuth().getAuthEmail());
             }
             reviewDTOList.add(reviewDTO);
         }

@@ -19,7 +19,7 @@ public class ReviewDTO {
 
     private Long showId;
 
-    private Long authId;
+    private String authEmail;
 
     private String token;
 

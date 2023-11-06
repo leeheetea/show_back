@@ -48,8 +48,8 @@ public class ReviewServiceTest {
 
     @Test
     public void testReadReview() throws JsonProcessingException{
-        List<ReviewDTO> list =reviewService.findReviewDTOById(1L);
 
+        List<ReviewDTO> list =reviewService.findReviewDTOById(1L);
         System.out.println("========================================================================");
         System.out.println(list);
     }
