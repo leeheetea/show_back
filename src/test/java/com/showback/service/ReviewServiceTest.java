@@ -1,6 +1,7 @@
 package com.showback.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.showback.controller.ReviewController;
 import com.showback.dto.ReviewDTO;
 import com.showback.dto.UserAuthDTO;
 import com.showback.model.Review;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -33,6 +35,7 @@ public class ReviewServiceTest {
 
     @Autowired
     private UserAuthRepository userAuthRepository;
+
 
     @Test
     public void testCreateReview() throws JsonProcessingException {
@@ -57,7 +60,7 @@ public class ReviewServiceTest {
     @Test
     public void testUpdateReview() throws JsonProcessingException{
         ReviewDTO reviewDTO  = new ReviewDTO();
-        reviewDTO.setReviewId(2L);
+        reviewDTO.setReviewId(3L);
         reviewDTO.setReviewGrade(4);
         reviewDTO.setReviewText("test test good!");
         reviewDTO.setReviewTimestamp(LocalDateTime.now());
@@ -69,5 +72,12 @@ public class ReviewServiceTest {
 
     }
 
+    @Test
+    public void testDeleteReview() throws JsonProcessingException{
+        testUpdateReview();
+        testReadReview();
+        reviewService.deleteReview(1L);
+        testReadReview();
+    }
 
 }

@@ -30,9 +30,7 @@ public class ReviewController {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
             String token = request.getHeader("Authorization").replace("Bearer ", "");
-            System.out.println("--token = " + token);
             Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
-            System.out.println("--userId = " + userId);
 
             Review review = reviewService.createReview(reviewDTO, userId);
             if (review != null){
@@ -43,18 +41,34 @@ public class ReviewController {
     }
 
     @GetMapping("/{showId}")
-    public ResponseEntity<List<ReviewDTO>> ReadReview(@PathVariable("showId") Long showId){
-        List<ReviewDTO> reviewDTOList = reviewService.findReviewDTOById(showId);
+    public ResponseEntity<List<ReviewDTO>> ReadReview(@PathVariable("showId") Long showId,
+                                                      HttpServletRequest request){
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
+
+        List<ReviewDTO> reviewDTOList = reviewService.findReviewDTOById(showId, userId);
         return ResponseEntity.ok().body(reviewDTOList);
+
     }
 
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<?> createReview(@RequestBody ReviewDTO reviewDTO,
+    public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO,
                                           HttpServletRequest request,
                                           @PathVariable("reviewId") Long reviewId) throws JsonProcessingException {
         reviewService.updateReview(reviewDTO);
         return ResponseEntity.ok().body(reviewId);
+    }
+
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable("reviewId") Long reviewId) throws JsonProcessingException {
+        boolean result = reviewService.deleteReview(reviewId);
+        if (result) {
+            return ResponseEntity.ok().body("리뷰가 성공적으로 삭제되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("리뷰 삭제 중 오류가 발생했습니다.");
+        }
     }
 
 }

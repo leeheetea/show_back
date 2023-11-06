@@ -31,7 +31,7 @@ public class Review {
     private Show show;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "auth_id")
     @JsonBackReference
     private UserAuth userAuth;
 }

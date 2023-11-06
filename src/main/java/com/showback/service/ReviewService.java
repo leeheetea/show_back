@@ -25,8 +25,8 @@ public class ReviewService {
     private final UserAuthRepository userAuthRepository;
     private final ReviewMapper reviewMapper;
 
-    public List<ReviewDTO> findReviewDTOById(Long showId) {
-        List<Review> reviews = reviewRepository.findAllByShowId(showId);
+    public List<ReviewDTO> findReviewDTOById(Long showId, Long userId) {
+        List<Review> reviews = reviewRepository.findAllByShowIdAndUserId(showId, userId);
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
         for(Review review : reviews){
             ReviewDTO reviewDTO = new ReviewDTO();
@@ -69,13 +69,17 @@ public class ReviewService {
 
     }
 
-    public boolean deleteReview(Review review) throws  JsonProcessingException{
-        try {
-            reviewRepository.delete(review);
-            return true;
-        } catch (Exception e) {
-            System.out.println( "리뷰 삭제 실패: " + e.getMessage());
-            return false;
+    public boolean deleteReview(Long reviewId) throws  JsonProcessingException{
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+        if (review != null) {
+            try {
+                reviewRepository.delete(review);
+                return true;
+            } catch (Exception e) {
+                System.out.println("리뷰 삭제 실패: " + e.getMessage());
+                return false;
+            }
         }
+        return false;
     }
 }
