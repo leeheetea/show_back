@@ -99,21 +99,15 @@ public class ShowService {
                         .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
                 schedules.add(Schedule);
             } else {
-                schedules.add(showScheduleMapper.toEntity(dto));  // 새로운 ShowSchedule
+                schedules.add(showScheduleMapper.toEntity(dto));
             }
         }
 
-        List<ShowBanner> showBanners = new ArrayList<>();
+        ShowBannerDTO showBanners = showDTO.getShowBanners();
+        ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
 
-//        for (ShowBannerDTO dto : showDTO.getShowBanners()) {
-//            if (dto.getShowId() != null) {
-//                ShowBanner existingBanner = showBannerRepository.findById(dto.getShowId())
-//                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-//                showBanners.add(existingBanner);
-//            } else {
-//                showBanners.add(showBannerMapper.toEntity(dto));
-//            }
-//        }
+        show.setShowBanner(showBanner);
+
         return show.getShowId();
     }
 

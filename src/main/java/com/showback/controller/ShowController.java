@@ -1,11 +1,13 @@
 package com.showback.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.showback.dto.ShowBannerDTO;
 import com.showback.dto.ShowDTO;
 import com.showback.dto.ShowScheduleDTO;
 import com.showback.dto.ShowSeatDTO;
 import com.showback.exception.ShowNotFoundException;
 import com.showback.model.Show;
+import com.showback.model.ShowBanner;
 import com.showback.model.ShowSchedule;
 import com.showback.model.ShowSeat;
 import com.showback.service.ShowSeatService;
