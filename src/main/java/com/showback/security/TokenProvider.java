@@ -48,4 +48,13 @@ public class TokenProvider {
 
         return claims.getSubject();
     }
+
+    public boolean isTokenExpired(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+        Date expiration = claims.getExpiration();
+        return expiration.before(new Date());
+    }
 }

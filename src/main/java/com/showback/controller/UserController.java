@@ -1,6 +1,7 @@
 package com.showback.controller;
 
 import com.showback.dto.UserDTO;
+import com.showback.model.LoginLog;
 import com.showback.model.Password;
 import com.showback.model.User;
 import com.showback.model.UserAuth;
@@ -59,6 +60,15 @@ public class UserController {
     public ResponseEntity<?> authenticate(HttpServletRequest request,@RequestBody UserDTO userDTO) {
         String ipAddress = request.getRemoteAddr();
         String userAgent = request.getHeader("User-Agent");
+
+        User isExistingUser = userService.getByUsername(userDTO.getUsername());
+        if(isExistingUser != null) {
+            LoginLog lastLoginLog = userService.getLastLoginLog(isExistingUser);
+            if(lastLoginLog != null && lastLoginLog.getAccountStatus()) {
+                return ResponseEntity.badRequest().body("User already logged");
+            }
+        }
+
         User userEntity = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder, ipAddress, userAgent);
 
         if(userEntity != null) {
@@ -196,5 +206,17 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error");
         }
     }
+
+    @PostMapping("/name/request")
+    public ResponseEntity<?> getName(HttpServletRequest request){
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
+
+        String name = userService.findName(userId);
+        return  ResponseEntity.ok().body(name);
+    }
+
 
 }

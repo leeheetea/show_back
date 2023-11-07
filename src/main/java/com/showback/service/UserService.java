@@ -291,6 +291,20 @@ public class UserService {
         }
         return 0;
     }
+
+    public User getByUsername(String username){
+        return userRepository.findByUsername(username);
+    }
+
+    public LoginLog getLastLoginLog(User user){
+        return loginLogRepository.findTopByUserOrderByLoginTimeDesc(user);
+    }
+
+    public String findName(Long userId){
+        UserAuth userAuth = userAuthRepository.findByUser_UserId(userId);
+
+        return userAuth.getAuthName();
+    }
 }
 
 
