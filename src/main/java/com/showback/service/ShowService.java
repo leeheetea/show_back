@@ -49,6 +49,22 @@ public class ShowService {
     }
 
     @Transactional
+    public List<ShowDTO> findShowDTOByType(String type){
+
+        List<Show> shows = showRepository.findByType(type);
+
+        return shows.stream()
+                .map(show -> {
+                    try {
+                        return showMapper.toDTO(show);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public Show createShow(ShowDTO showDTO) throws JsonProcessingException {
 
         Venue venue = null;
