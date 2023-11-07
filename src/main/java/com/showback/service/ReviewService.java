@@ -25,8 +25,8 @@ public class ReviewService {
     private final UserAuthRepository userAuthRepository;
     private final ReviewMapper reviewMapper;
 
-    public List<ReviewDTO> findReviewDTOById(Long showId, Long userId) {
-        List<Review> reviews = reviewRepository.findAllByShowIdAndUserId(showId, userId);
+    public List<ReviewDTO> findReviewDTOById(Long showId, Long authId) {
+        List<Review> reviews = reviewRepository.findAllByShowIdAndUserId(showId, authId);
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
         for(Review review : reviews){
             ReviewDTO reviewDTO = new ReviewDTO();

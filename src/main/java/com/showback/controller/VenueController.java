@@ -1,15 +1,14 @@
 package com.showback.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.showback.dto.ShowDTO;
 import com.showback.dto.VenueDTO;
 import com.showback.model.Venue;
 import com.showback.repository.VenueRepository;
 import com.showback.service.VenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/venue")
@@ -27,5 +26,14 @@ public class VenueController {
         return ResponseEntity.ok().body(venue);
     }
 
+<<<<<<< HEAD
     
+=======
+    @GetMapping("/{venueId}")
+    public ResponseEntity<VenueDTO> getVenue(@PathVariable("venueId") Long venueId)
+     throws JsonProcessingException {
+        VenueDTO venueDTO = venueService.findById(venueId);
+        return ResponseEntity.ok().body(venueDTO);
+    }
+>>>>>>> 7166db5107a814540d1e9f93f8aa32719dbc895a
 }
