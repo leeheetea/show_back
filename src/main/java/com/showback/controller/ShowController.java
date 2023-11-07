@@ -44,6 +44,14 @@ public class ShowController {
         return ResponseEntity.ok().body(show);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ShowDTO>> getShowByType(@RequestParam String type) throws JsonProcessingException {
+
+        List<ShowDTO> showDTOByType = showService.findShowDTOByType(type);
+
+        return ResponseEntity.ok().body(showDTOByType);
+    }
+
     @GetMapping("/{showId}")
     public ResponseEntity<ShowDTO> getShowById(@PathVariable("showId") Long showId) throws JsonProcessingException {
         ShowDTO showDTO = showService.findShowDTOById(showId);
@@ -52,6 +60,8 @@ public class ShowController {
         }
         return ResponseEntity.ok(showDTO);
     }
+
+
 
     @PostMapping("/{showId}")
     public ResponseEntity<?> updateShow(@RequestBody ShowDTO showDTO, @PathVariable("showId") Long showId) throws JsonProcessingException {

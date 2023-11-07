@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,5 +47,13 @@ public class VenueService {
 
         seatRepository.saveAll(seats);
         return venue;
+    }
+
+    @Transactional
+    public VenueDTO findByVenue(Long venueId){
+        Venue venue = venueRepository.findById(venueId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        return venueMapper.toDTO(venue);
     }
 }
