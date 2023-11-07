@@ -6,6 +6,7 @@ import com.showback.model.Review;
 import com.showback.security.TokenProvider;
 import com.showback.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -41,18 +42,17 @@ public class ReviewController {
     }
 
     @GetMapping("/{showId}")
-    public ResponseEntity<List<ReviewDTO>> ReadReview(@PathVariable("showId") Long showId,
-                                                      HttpServletRequest request){
-        String token = request.getHeader("Authorization").replace("Bearer ", "");
-        Long userId = Long.parseLong(tokenProvider.validateAndGetUserId(token));
+    public ResponseEntity<List<ReviewDTO>> ReadReview(@PathVariable("showId") Long showId){
 
-        List<ReviewDTO> reviewDTOList = reviewService.findReviewDTOById(showId, userId);
+        List<ReviewDTO> reviewDTOList = reviewService.findReviewDTOById(showId);
+//        if (reviewDTOList == null || reviewDTOList.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없음");
+//        }
         return ResponseEntity.ok().body(reviewDTOList);
-
     }
 
 
-    @PutMapping("/{reviewId}")
+    @PostMapping("/{reviewId}")
     public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO,
                                           HttpServletRequest request,
                                           @PathVariable("reviewId") Long reviewId) throws JsonProcessingException {

@@ -6,7 +6,6 @@ import com.showback.model.User;
 import com.showback.model.UserAuth;
 import com.showback.security.TokenProvider;
 import com.showback.service.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -164,5 +163,18 @@ public class UserController {
         }
         return  ResponseEntity.badRequest().body("User not found");
     }
+
+    //유저 email 정보
+    @GetMapping("/email")
+    public String readUserEmail(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
+
+        String Email = userService.getByEmail(userId);
+
+        return(Email);
+    }
+
 
 }

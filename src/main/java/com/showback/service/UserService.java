@@ -117,5 +117,10 @@ public class UserService {
         return null;
     }
 
+    public String getByEmail(Long userId) {
+        UserAuth userAuth = userAuthRepository.findByUserId(userId);
+        String userEmail = userAuth.getAuthEmail();
+        return userEmail;
+    }
 }
 

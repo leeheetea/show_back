@@ -25,26 +25,27 @@ public class ReviewService {
     private final UserAuthRepository userAuthRepository;
     private final ReviewMapper reviewMapper;
 
-    public List<ReviewDTO> findReviewDTOById(Long showId, Long authId) {
-        List<Review> reviews = reviewRepository.findAllByShowIdAndUserId(showId, authId);
-        List<ReviewDTO> reviewDTOList = new ArrayList<>();
-        for(Review review : reviews){
-            ReviewDTO reviewDTO = new ReviewDTO();
-            reviewDTO.setReviewId(review.getReviewId());
-            reviewDTO.setReviewGrade(review.getReviewGrade());
-            reviewDTO.setReviewText(review.getReviewText());
-            reviewDTO.setReviewTimestamp(review.getReviewTimestamp());
-            // Check if show is not null
-            if (review.getShow() != null) {
-                reviewDTO.setShowId(review.getShow().getShowId());
+    public List<ReviewDTO> findReviewDTOById(Long showId) {
+            List<Review> reviews = reviewRepository.findAllByShowId(showId);
+            List<ReviewDTO> reviewDTOList = new ArrayList<>();
+            for(Review review : reviews){
+                ReviewDTO reviewDTO = new ReviewDTO();
+                reviewDTO.setReviewId(review.getReviewId());
+                reviewDTO.setReviewGrade(review.getReviewGrade());
+                reviewDTO.setReviewText(review.getReviewText());
+                reviewDTO.setReviewTimestamp(review.getReviewTimestamp());
+                // Check if show is not null
+                if (review.getShow() != null) {
+                    reviewDTO.setShowId(review.getShow().getShowId());
+                }
+                // Check if userAuth is not null
+                if (review.getUserAuth() != null) {
+                    reviewDTO.setAuthEmail(review.getUserAuth().getAuthEmail());
+                }
+                reviewDTOList.add(reviewDTO);
             }
-            // Check if userAuth is not null
-            if (review.getUserAuth() != null) {
-                reviewDTO.setAuthEmail(review.getUserAuth().getAuthEmail());
-            }
-            reviewDTOList.add(reviewDTO);
-        }
-        return reviewDTOList;
+            return reviewDTOList;
+
     }
 
 
@@ -58,16 +59,31 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-    public Long updateReview(ReviewDTO reviewDTO) throws  JsonProcessingException{
-        Review review = reviewRepository.findById(reviewDTO.getReviewId())
-                .orElseThrow();
-        review.setReviewText(reviewDTO.getReviewText());
-        review.setReviewGrade(reviewDTO.getReviewGrade());
-        review.setReviewTimestamp(reviewDTO.getReviewTimestamp());
-
-        return review.getReviewId();
-
+//    public Long updateReview(ReviewDTO reviewDTO) throws  JsonProcessingException{
+//        Review review = reviewRepository.findById(reviewDTO.getReviewId())
+//                .orElseThrow();
+//        review.setReviewText(reviewDTO.getReviewText());
+//        review.setReviewGrade(reviewDTO.getReviewGrade());
+//        review.setReviewTimestamp(reviewDTO.getReviewTimestamp());
+//
+//        return review.getReviewId();
+//
+//    }
+    @Transactional
+    public Long updateReview(ReviewDTO reviewDTO) throws JsonProcessingException {
+        Long reviewId = reviewDTO.getReviewId();
+        if (reviewId != null) {
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow();
+            review.setReviewText(reviewDTO.getReviewText());
+            review.setReviewGrade(reviewDTO.getReviewGrade());
+            review.setReviewTimestamp(reviewDTO.getReviewTimestamp());
+            return review.getReviewId();
+        } else {
+            return null;
+        }
     }
+
 
     public boolean deleteReview(Long reviewId) throws  JsonProcessingException{
         Review review = reviewRepository.findById(reviewId).orElse(null);
