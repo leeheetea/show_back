@@ -7,6 +7,7 @@ import com.showback.model.User;
 import com.showback.model.UserAuth;
 import com.showback.security.TokenProvider;
 import com.showback.service.UserService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,6 @@ public class UserController {
     private final TokenProvider tokenProvider;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // join
     @PostMapping
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
 

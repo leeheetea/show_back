@@ -1,5 +1,6 @@
 package com.showback.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,10 +24,17 @@ public class Seat {
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
+    @JsonBackReference
     private Venue venue;
 
     @OneToMany(mappedBy = "seat")
     private List<ShowSeat> showSeats = new ArrayList<>();
 
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+        if(!venue.getSeats().contains(this)) {
+            venue.getSeats().add(this);
+        }
+    }
 
 }

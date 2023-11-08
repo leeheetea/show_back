@@ -28,7 +28,7 @@ public class Order {
     @JoinColumn(name = "auth_id")
     private UserAuth userAuth;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @OneToOne(mappedBy = "order")

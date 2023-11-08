@@ -32,7 +32,7 @@ public class QShow extends EntityPathBase<Show> {
 
     public final ListPath<Review, QReview> reviews = this.<Review, QReview>createList("reviews", Review.class, QReview.class, PathInits.DIRECT2);
 
-    public final ListPath<ShowBanner, QShowBanner> showBanners = this.<ShowBanner, QShowBanner>createList("showBanners", ShowBanner.class, QShowBanner.class, PathInits.DIRECT2);
+    public final QShowBanner showBanner;
 
     public final NumberPath<Long> showId = createNumber("showId", Long.class);
 
@@ -66,6 +66,7 @@ public class QShow extends EntityPathBase<Show> {
 
     public QShow(Class<? extends Show> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.showBanner = inits.isInitialized("showBanner") ? new QShowBanner(forProperty("showBanner"), inits.get("showBanner")) : null;
         this.venue = inits.isInitialized("venue") ? new QVenue(forProperty("venue")) : null;
     }
 

@@ -1,5 +1,6 @@
 package com.showback.mapper;
 
+import com.showback.dto.SeatDTO;
 import com.showback.dto.ShowSeatDTO;
 import com.showback.exception.ShowNotFoundException;
 import com.showback.model.Seat;
@@ -21,23 +22,25 @@ public class ShowSeatMapper {
 
     public ShowSeatDTO toDTO(ShowSeat showSeat) {
         ShowSeatDTO dto = new ShowSeatDTO();
+        Seat seat = showSeat.getSeat();
 
         dto.setShowSeatId(showSeat.getShowSeatId());
         dto.setCanReservation(showSeat.isCanReservation());
         dto.setShowId(showSeat.getShow() != null ? showSeat.getShow().getShowId() : null);
-        dto.setSeatId(showSeat.getSeat() != null ? showSeat.getSeat().getSeatId() : null);
+        dto.setSeatId(seat.getSeatId());
 
         return dto;
     }
 
     public ShowSeat toEntity(ShowSeatDTO dto) {
         ShowSeat showSeat = new ShowSeat();
+        Long seatId = dto.getSeatId();
+
+        Seat seat = seatRepository.findById(seatId)
+                .orElseThrow(EntityNotFoundException::new);
 
         Show show = showRepository.findById(dto.getShowId())
                 .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-
-        Seat seat = seatRepository.findById(dto.getSeatId())
-                .orElseThrow(EntityNotFoundException::new);
 
         showSeat.setShowSeatId(dto.getShowSeatId());
         showSeat.setCanReservation(dto.isCanReservation());

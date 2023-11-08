@@ -2,7 +2,6 @@ package com.showback.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.showback.dto.ShowBannerDTO;
 import com.showback.dto.ShowDTO;
@@ -11,10 +10,7 @@ import com.showback.exception.ShowNotFoundException;
 import com.showback.mapper.ShowBannerMapper;
 import com.showback.mapper.ShowMapper;
 import com.showback.mapper.ShowScheduleMapper;
-import com.showback.model.Show;
-import com.showback.model.ShowBanner;
-import com.showback.model.ShowSchedule;
-import com.showback.model.Venue;
+import com.showback.model.*;
 import com.showback.repository.ShowBannerRepository;
 import com.showback.repository.ShowRepository;
 import com.showback.repository.ShowScheduleRepository;
@@ -49,27 +45,23 @@ public class ShowService {
         Show foundShow = showRepository.findById(showId)
                 .orElseThrow(() -> new ShowNotFoundException(showId));
 
-        List<ShowScheduleDTO> showScheduleDTOs = foundShow.getShowSchedules().stream()
-                .map(showScheduleMapper::toDTO)
-                .collect(Collectors.toList());
-        List<ShowBannerDTO> showBannerDTOs = foundShow.getShowBanners().stream()
-                .map(showBannerMapper::toDTO)
-                .collect(Collectors.toList());
+        return showMapper.toDTO(foundShow);
+    }
 
-        List<String> contentDetail = objectMapper
-                .readValue(foundShow.getContentDetail(), new TypeReference<List<String>>() {
-        });
+    @Transactional
+    public List<ShowDTO> findShowDTOByType(String type){
 
-        return ShowDTO.builder()
-                .showId(foundShow.getShowId())
-                .title(foundShow.getTitle())
-                .type(foundShow.getType())
-                .contentDetail(contentDetail)
-                .thumbnailUrl(foundShow.getThumbnailUrl())
-                .price(foundShow.getPrice())
-                .showSchedules(showScheduleDTOs)
-                .showBanners(showBannerDTOs)
-                .build();
+        List<Show> shows = showRepository.findByType(type);
+
+        return shows.stream()
+                .map(show -> {
+                    try {
+                        return showMapper.toDTO(show);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -82,6 +74,17 @@ public class ShowService {
         }
 
         Show show = showMapper.toEntity(showDTO, venue);
+
+        if (venue != null && venue.getSeats() != null) {
+            List<ShowSeat> showSeats = new ArrayList<>();
+            for (Seat seat : venue.getSeats()) {
+                ShowSeat showSeat = new ShowSeat();
+                showSeat.setSeat(seat);
+                showSeat.setShow(show);
+                showSeats.add(showSeat);
+            }
+            show.setShowSeats(showSeats);
+        }
 
         return showRepository.save(show);
     }
@@ -113,22 +116,32 @@ public class ShowService {
                         .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
                 schedules.add(Schedule);
             } else {
-                schedules.add(showScheduleMapper.toEntity(dto));  // 새로운 ShowSchedule
+                schedules.add(showScheduleMapper.toEntity(dto));
             }
         }
 
-        List<ShowBanner> showBanners = new ArrayList<>();
+        ShowBannerDTO showBanners = showDTO.getShowBanners();
+        ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
 
-        for (ShowBannerDTO dto : showDTO.getShowBanners()) {
-            if (dto.getShowId() != null) {
-                ShowBanner existingBanner = showBannerRepository.findById(dto.getShowId())
-                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-                showBanners.add(existingBanner);
-            } else {
-                showBanners.add(showBannerMapper.toEntity(dto));
-            }
-        }
+        show.setShowBanner(showBanner);
+
         return show.getShowId();
+    }
+
+    @Transactional
+    public List<ShowBannerDTO> findAllShowBanner(){
+        List<ShowBanner> showBanners = showBannerRepository.findAll();
+        return showBanners.stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ShowBannerDTO> findAllSmallBanner(){
+        List<ShowBanner> byBannerUrlIsNotNull = showBannerRepository.findByBannerUrlIsNotNull();
+        return byBannerUrlIsNotNull.stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
 }
