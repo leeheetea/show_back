@@ -1,15 +1,18 @@
 package com.showback.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "orders_details")
 public class OrderDetail {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderDetailId;
 
     private int finalPrice;
@@ -18,7 +21,7 @@ public class OrderDetail {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "seat_id")
-    private Seat seat;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "show_seat_id")
+    private ShowSeat showSeat;
 }

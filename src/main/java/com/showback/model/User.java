@@ -1,19 +1,29 @@
 package com.showback.model;
 
-import lombok.Data;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
+    private String username;
 
     private int loginType;
 
@@ -28,4 +38,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<UserAgreement> userAgreements = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private UserAuth userAuth;
+
 }

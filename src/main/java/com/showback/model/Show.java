@@ -1,6 +1,8 @@
 package com.showback.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,7 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "shows")
-@Data
+@Getter
+@Setter
 public class Show {
 
     @Id
@@ -19,28 +22,37 @@ public class Show {
 
     private String type;
 
+    @Column(length = 2000)
     private String contentDetail;
 
     private String thumbnailUrl;
+
+    private String period;
 
     private int price;
 
     @ManyToOne
     @JoinColumn(name = "venue_id")
+    @JsonManagedReference
     private Venue venue;
 
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ShowSeat> showSeats = new ArrayList<>();
 
     @OneToMany(mappedBy = "show")
+    @JsonManagedReference
     private List<Reservation> reservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show")
+    @JsonManagedReference
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShowSchedule> showSchedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show")
-    private List<ShowBanner> showBanners = new ArrayList<>();
+    @OneToOne(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private ShowBanner showBanner;
 }

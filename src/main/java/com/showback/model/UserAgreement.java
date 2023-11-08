@@ -1,6 +1,9 @@
 package com.showback.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,7 +11,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users_agreements")
 public class UserAgreement {
 
@@ -18,6 +22,7 @@ public class UserAgreement {
 
     private boolean agreed;
 
+    @CreatedDate
     private Date agreementDate;
 
     @ManyToOne

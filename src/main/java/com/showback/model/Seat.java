@@ -1,13 +1,16 @@
 package com.showback.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "seats")
 public class Seat {
 
@@ -19,17 +22,19 @@ public class Seat {
 
     private int seatColumn;
 
-    @OneToMany(mappedBy = "seat")
-    private List<OrderDetail> orderDetails = new ArrayList<>();
-
-    @OneToMany(mappedBy = "seat")
-    private List<Reservation> reservations = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "venue_id")
+    @JsonBackReference
+    private Venue venue;
 
     @OneToMany(mappedBy = "seat")
     private List<ShowSeat> showSeats = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "venue_id")
-    private Venue venue;
+    public void setVenue(Venue venue) {
+        this.venue = venue;
+        if(!venue.getSeats().contains(this)) {
+            venue.getSeats().add(this);
+        }
+    }
 
 }
