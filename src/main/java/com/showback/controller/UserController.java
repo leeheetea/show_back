@@ -92,9 +92,7 @@ public class UserController {
         if(responseUserDTO != null) {
             return ResponseEntity.ok().body(responseUserDTO);
         }else {
-            // temp
-            UserDTO tempDTO = UserDTO.builder().build();
-            return ResponseEntity.badRequest().body(tempDTO);
+            return ResponseEntity.badRequest().body("User not found");
         }
     }
 

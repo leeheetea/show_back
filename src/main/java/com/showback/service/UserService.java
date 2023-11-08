@@ -162,9 +162,13 @@ public class UserService {
     // find id
     public UserDTO retrieveUsername(final String name, final String email) {
         final User findUsername = userRepository.findByUserAuth_AuthNameAndUserAuth_AuthEmail(name, email);
+        if (findUsername == null) {
+            return null;
+        }
+
         final UserAuth userAuth = userAuthRepository.findByUser_UserId(findUsername.getUserId());
 
-        if(findUsername != null) {
+        if(userAuth != null) {
             return UserDTO.builder()
                     .username(findUsername.getUsername())
                     .authDate(userAuth.getAuthDate())
