@@ -51,13 +51,20 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviewDTOList);
     }
 
+    @GetMapping("/one/{reviewId}")
+    public ResponseEntity<ReviewDTO> readOndReview(@PathVariable("reviewId") Long reviewId) throws JsonProcessingException {
+        ReviewDTO reviewDTO = reviewService.findById(reviewId);
 
-    @PostMapping("/{reviewId}")
-    public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO,
-                                          HttpServletRequest request,
-                                          @PathVariable("reviewId") Long reviewId) throws JsonProcessingException {
-        reviewService.updateReview(reviewDTO);
-        return ResponseEntity.ok().body(reviewId);
+        return ResponseEntity.ok().body(reviewDTO);
+    }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO) throws JsonProcessingException {
+        boolean result = reviewService.updateReview(reviewDTO);
+        if (result){
+            return ResponseEntity.ok().body("review update");
+        }
+        return ResponseEntity.ok().body("err");
     }
 
 

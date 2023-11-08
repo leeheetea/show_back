@@ -70,7 +70,7 @@ public class ReviewService {
 //
 //    }
     @Transactional
-    public Long updateReview(ReviewDTO reviewDTO) throws JsonProcessingException {
+    public boolean updateReview(ReviewDTO reviewDTO) throws JsonProcessingException {
         Long reviewId = reviewDTO.getReviewId();
         if (reviewId != null) {
             Review review = reviewRepository.findById(reviewId)
@@ -78,9 +78,11 @@ public class ReviewService {
             review.setReviewText(reviewDTO.getReviewText());
             review.setReviewGrade(reviewDTO.getReviewGrade());
             review.setReviewTimestamp(reviewDTO.getReviewTimestamp());
-            return review.getReviewId();
+
+            Review updatedReview = reviewRepository.save(review);
+            return true;
         } else {
-            return null;
+            return false;
         }
     }
 
@@ -97,5 +99,23 @@ public class ReviewService {
             }
         }
         return false;
+    }
+
+    public ReviewDTO findById(Long reviewId) throws  JsonProcessingException{
+        Review review = reviewRepository.findById(reviewId).orElse(null);
+        ReviewDTO reviewDTO = new ReviewDTO();
+        assert review != null;
+        reviewDTO.setReviewId(review.getReviewId());
+        reviewDTO.setReviewGrade(review.getReviewGrade());
+        reviewDTO.setReviewText(review.getReviewText());
+        reviewDTO.setReviewTimestamp(review.getReviewTimestamp());
+        if (review.getShow() != null) {
+            reviewDTO.setShowId(review.getShow().getShowId());
+        }
+        // Check if userAuth is not null
+        if (review.getUserAuth() != null) {
+            reviewDTO.setAuthEmail(review.getUserAuth().getAuthEmail());
+        }
+        return reviewDTO;
     }
 }
