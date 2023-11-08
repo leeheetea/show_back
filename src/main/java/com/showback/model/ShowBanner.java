@@ -1,14 +1,11 @@
 package com.showback.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "shows_banners")
 public class ShowBanner {
 
@@ -18,10 +15,7 @@ public class ShowBanner {
 
     private String bannerUrl;
 
-    private String smallBannerUrl;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "show_id")
-    @JsonBackReference
     private Show show;
 }
