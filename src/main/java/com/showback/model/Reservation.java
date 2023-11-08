@@ -1,43 +1,31 @@
 package com.showback.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@Builder
+@Data
 @Table(name = "reservations")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
 
     private Date reservationDate;
 
     private String reservationState;
 
-    private String reservationShowName;
-
-    private String reservationShowVenue;
-
-    private int reservationPrice;
-
-    private int reservationTicketAmount;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
     @ManyToOne
+    @JoinColumn(name = "seat_id")
+    private Seat seat;
+
+    @ManyToOne
     @JoinColumn(name = "show_id")
-    @JsonBackReference
     private Show show;
 }
