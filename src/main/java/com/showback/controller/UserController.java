@@ -1,6 +1,7 @@
 package com.showback.controller;
 
 import com.showback.dto.UserDTO;
+import com.showback.model.LoginLog;
 import com.showback.model.Password;
 import com.showback.model.User;
 import com.showback.model.UserAuth;
@@ -26,46 +27,51 @@ public class UserController {
     private final TokenProvider tokenProvider;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-
-
-    // 회원가입
     @PostMapping
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
 
-        User userEntity = new User();
-        userEntity.setUsername(userDTO.getUsername());
-
-        Password passwordEntity = new Password();
-        passwordEntity.setUser(userEntity);
-        passwordEntity.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
-
-        UserAuth userAuthEntity = new UserAuth();
-        userAuthEntity.setUser(userEntity);
-        userAuthEntity.setAuthName(userDTO.getName());
-        userAuthEntity.setAuthEmail(userDTO.getEmail());
-        userAuthEntity.setAuthPhone(userDTO.getPhone());
-        userAuthEntity.setSmsChoice(userDTO.isSmscheck());
-        userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
-
-        userService.register(userEntity, passwordEntity, userAuthEntity);
-
-        UserDTO responseUserDTO = new UserDTO();
-        responseUserDTO.setName(userDTO.getName());
-
-//        return new ResponseEntity<>("registered", HttpStatus.CREATED);
+//        User userEntity = new User();
+//        userEntity.setUsername(userDTO.getUsername());
+//
+//        Password passwordEntity = new Password();
+//        passwordEntity.setUser(userEntity);
+//        passwordEntity.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
+//
+//        UserAuth userAuthEntity = new UserAuth();
+//        userAuthEntity.setUser(userEntity);
+//        userAuthEntity.setAuthName(userDTO.getName());
+//        userAuthEntity.setAuthEmail(userDTO.getEmail());
+//        userAuthEntity.setAuthPhone(userDTO.getPhone());
+//        userAuthEntity.setSmsChoice(userDTO.isSmscheck());
+//        userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
+//
+//        userService.register(userEntity, passwordEntity, userAuthEntity);
+//
+//        UserDTO responseUserDTO = new UserDTO();
+//        responseUserDTO.setName(userDTO.getName());
+//
+//        return ResponseEntity.ok().body(responseUserDTO);
+        UserDTO responseUserDTO = userService.register(userDTO);
         return ResponseEntity.ok().body(responseUserDTO);
     }
 
-    // 로그인
+    // login
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(HttpServletRequest request,@RequestBody UserDTO userDTO) {
-        User userEntity = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
+        String ipAddress = request.getRemoteAddr();
+        String userAgent = request.getHeader("User-Agent");
+
+        User isExistingUser = userService.getByUsername(userDTO.getUsername());
+        if(isExistingUser != null) {
+            LoginLog lastLoginLog = userService.getLastLoginLog(isExistingUser);
+            if(lastLoginLog != null && lastLoginLog.getAccountStatus()) {
+                return ResponseEntity.badRequest().body("User already logged");
+            }
+        }
+
+        User userEntity = userService.getByCredentials(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder, ipAddress, userAgent);
 
         if(userEntity != null) {
-            String ipAddress =  request.getRemoteAddr();
-            String userAgent = request.getHeader("User-Agent");
-            String loginType;
-
             final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
             final UserDTO responseUserDTO = UserDTO.builder()
                     .username(userDTO.getUsername())
@@ -73,13 +79,12 @@ public class UserController {
                     .build();
             return ResponseEntity.ok().body(responseUserDTO);
         } else {
-            // temp
-            UserDTO tempDTO = UserDTO.builder().build();
-            return ResponseEntity.badRequest().body(tempDTO);
+            int lastFailureCount = userService.getLastLoginFailureCount(userDTO.getUsername());
+            return ResponseEntity.badRequest().body(lastFailureCount);
         }
     }
 
-    // 아이디 찾기
+    // find username
     @PostMapping("/username/retrieve")
     public ResponseEntity<?> retrieveUsername(@RequestBody UserDTO userDTO) {
         UserDTO responseUserDTO = userService.retrieveUsername(userDTO.getName(), userDTO.getEmail());
@@ -87,30 +92,35 @@ public class UserController {
         if(responseUserDTO != null) {
             return ResponseEntity.ok().body(responseUserDTO);
         }else {
-            // temp
-            UserDTO tempDTO = UserDTO.builder().build();
-            return ResponseEntity.badRequest().body(tempDTO);
+            return ResponseEntity.badRequest().body("User not found");
         }
     }
 
-    // 비밀번호 재설정
-//    @PostMapping("/user/password/retrieve")
-//    public ResponseEntity<?> retrievePassword(@RequestBody UserDTO userDTO){
-//       Password resetPassword = userService.retrievePassword(userDTO.getUsername(), userDTO.getName(), userDTO.getEmail());
-//
-//       if(resetPassword != null) {
-//
-//       }
-//        return  null;
-//    }
+    // find password
+    @PostMapping("/password/request")
+    public ResponseEntity<?> requestPassword(@RequestBody UserDTO userDTO){
+       Password resetPassword = userService.requestPassword(userDTO.getUsername(), userDTO.getName(), userDTO.getEmail());
 
-    @PostMapping("/password/retrieve")
-    public ResponseEntity<?> retrievePassword(@RequestBody UserDTO userDTO) {
-        userService.updatePasswordByUsername(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
-
-        return ResponseEntity.ok().body("password updated");
+       if(resetPassword != null) {
+           return ResponseEntity.ok().body("Password found");
+       } else {
+           return ResponseEntity.badRequest().body("User not found");
+       }
     }
 
+    // updatePasswordByUsername
+    @PostMapping("/password/retrieve")
+    public ResponseEntity<?> retrievePassword(@RequestBody UserDTO userDTO) {
+        Password updatePassword = userService.updatePasswordByUsername(userDTO.getUsername(), userDTO.getPassword(), passwordEncoder);
+
+        if(updatePassword != null) {
+            return ResponseEntity.ok().body("password updated");
+        } else {
+            return ResponseEntity.badRequest().body("password updated fail");
+        }
+    }
+
+    // resetPassword
     @PostMapping("/password/reset")
     public ResponseEntity<?> resetPassword(
             HttpServletRequest request,
@@ -134,6 +144,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
+    // email update
     @PostMapping("/email/update")
     public ResponseEntity<?> updateEmail(HttpServletRequest request, @RequestBody UserDTO userDTO){
         String token = request.getHeader("Authorization").replace("Bearer ", "");
@@ -148,6 +159,7 @@ public class UserController {
         return ResponseEntity.badRequest().body("User not found");
     }
 
+    // password auth
     @PostMapping("/password/authentication")
     public ResponseEntity<?> passwordAuthentication(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
@@ -164,5 +176,45 @@ public class UserController {
         }
         return  ResponseEntity.badRequest().body("User not found");
     }
+
+    //
+    @PostMapping("/userinfo/authentication")
+    public ResponseEntity<?> getUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
+
+        if(userId != null) {
+            UserDTO responseDTO = userService.verifyPasswordBeforeGetUser(userId, userDTO.getPassword(), passwordEncoder);
+            if (responseDTO != null) {
+                return ResponseEntity.ok().body(responseDTO);
+            } else {
+                return ResponseEntity.badRequest().body("Incorrect Password");
+            }
+        }
+        return  ResponseEntity.badRequest().body("User not found");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        String logoutUsername = userService.logout(userDTO.getToken());
+        if(logoutUsername != null) {
+            return ResponseEntity.ok().body(logoutUsername);
+        } else {
+            return ResponseEntity.badRequest().body("Error");
+        }
+    }
+
+    @PostMapping("/name/request")
+    public ResponseEntity<?> getName(HttpServletRequest request){
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
+
+        String name = userService.findName(userId);
+        return  ResponseEntity.ok().body(name);
+    }
+
 
 }

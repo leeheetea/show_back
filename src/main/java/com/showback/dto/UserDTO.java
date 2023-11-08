@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -23,5 +24,6 @@ public class UserDTO {
     private boolean smscheck;
     private String isRadioChecked;
     private Date authDate;
+    private Map<String, Boolean> termsChecked;
 
 }

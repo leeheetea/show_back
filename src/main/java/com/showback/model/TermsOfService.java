@@ -19,7 +19,8 @@ public class TermsOfService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long termsId;
 
-    private boolean isAccepted;
+    private String termCode;
+    private String title;
 
     @OneToMany(mappedBy = "termsOfService")
     private List<UserAgreement> userAgreements = new ArrayList<>();

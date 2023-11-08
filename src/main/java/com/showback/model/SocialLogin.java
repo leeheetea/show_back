@@ -28,5 +28,6 @@ public class SocialLogin {
     private Date socialUpdateDate;
 
     @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }

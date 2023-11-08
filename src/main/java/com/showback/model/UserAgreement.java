@@ -3,6 +3,7 @@ package com.showback.model;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class UserAgreement {
 
     private boolean agreed;
 
+    @CreatedDate
     private Date agreementDate;
 
     @ManyToOne
