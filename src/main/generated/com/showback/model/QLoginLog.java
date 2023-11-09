@@ -26,7 +26,7 @@ public class QLoginLog extends EntityPathBase<LoginLog> {
 
     public final StringPath ipAddress = createString("ipAddress");
 
-    public final DateTimePath<java.util.Date> loginFailureCount = createDateTime("loginFailureCount", java.util.Date.class);
+    public final NumberPath<Integer> loginFailureCount = createNumber("loginFailureCount", Integer.class);
 
     public final NumberPath<Long> loginLogId = createNumber("loginLogId", Long.class);
 
@@ -35,6 +35,8 @@ public class QLoginLog extends EntityPathBase<LoginLog> {
     public final DateTimePath<java.util.Date> logoutTime = createDateTime("logoutTime", java.util.Date.class);
 
     public final QUser user;
+
+    public final StringPath userAgent = createString("userAgent");
 
     public QLoginLog(String variable) {
         this(LoginLog.class, forVariable(variable), INITS);
