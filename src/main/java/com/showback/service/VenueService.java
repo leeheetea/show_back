@@ -1,6 +1,8 @@
 package com.showback.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.showback.dto.VenueDTO;
+import com.showback.exception.ShowNotFoundException;
 import com.showback.mapper.VenueMapper;
 import com.showback.model.Seat;
 import com.showback.model.Venue;
@@ -22,11 +24,11 @@ public class VenueService {
     private final VenueMapper venueMapper;
     private final SeatRepository seatRepository;
 
-    public Venue createVenue(VenueDTO venueDTO){
-
-        Venue venue = venueMapper.toEntity(venueDTO);
-
-        return venueRepository.save(venue);
+    @Transactional
+    public VenueDTO findById(Long venueId) throws JsonProcessingException {
+        Venue foundVenue = venueRepository.findById(venueId)
+                .orElseThrow(() -> new ShowNotFoundException(venueId));
+        return venueMapper.toDTO(foundVenue);
     }
 
     @Transactional
