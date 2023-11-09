@@ -53,8 +53,8 @@ public class ReviewController {
 
     @GetMapping("/one/{reviewId}")
     public ResponseEntity<ReviewDTO> readOndReview(@PathVariable("reviewId") Long reviewId) throws JsonProcessingException {
-        ReviewDTO reviewDTO = reviewService.findById(reviewId);
 
+        ReviewDTO reviewDTO = reviewService.findById(reviewId);
         return ResponseEntity.ok().body(reviewDTO);
     }
 

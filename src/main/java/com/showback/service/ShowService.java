@@ -114,21 +114,26 @@ public class ShowService {
     @Transactional
     public List<ShowDTO> searchShows(String keyword, List<String> types) throws JsonProcessingException {
 
-//        List<ShowDTO> results = showRepository.searchShowsByKeyword(keyword);
+//        List<Show> shows = showRepository.searchShowsByKeyword(keyword);
+//        List<ShowDTO> results = new ArrayList<>();
+//        for (Show show : shows) {
+//            results.add(showMapper.toDTO(show));
+//        }
 //
 //        if (types != null && !types.isEmpty()) {
 //            results = filterShowsByType(results, types);
 //        }
 //        return results;
+        List<Show> shows;
+        if (types != null && !types.isEmpty()) {
+            shows = showRepository.searchShowsByKeywordAndType(keyword, types.get(0));
+        } else {
+            shows = showRepository.searchShowsByKeyword(keyword);
+        }
 
-        List<Show> shows = showRepository.searchShowsByKeyword(keyword);
         List<ShowDTO> results = new ArrayList<>();
         for (Show show : shows) {
             results.add(showMapper.toDTO(show));
-        }
-
-        if (types != null && !types.isEmpty()) {
-            results = filterShowsByType(results, types);
         }
         return results;
     }

@@ -12,4 +12,8 @@ import java.util.List;
 public interface ShowRepository extends JpaRepository<Show, Long> {
     @Query("SELECT s FROM Show s WHERE s.title LIKE %:keyword%")
     List<Show> searchShowsByKeyword(String keyword);
+
+    @Query("SELECT s FROM Show s WHERE s.title LIKE %:keyword% AND s.type = :type")
+    List<Show> searchShowsByKeywordAndType(String keyword, String type);
+
 }

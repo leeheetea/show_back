@@ -20,7 +20,7 @@ public class SearchController {
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ShowDTO>> searchShows(@RequestParam(name = "keyword") String keyword,
-                                                     @RequestParam(name = "type", required = false) List<String> types){
+                                                     @RequestParam(name = "type", required = false) List<String> types) {
         try {
             List<ShowDTO> results = showService.searchShows(keyword, types);
             return ResponseEntity.ok().body(results);
