@@ -16,6 +16,7 @@ import com.showback.repository.ShowRepository;
 import com.showback.repository.ShowScheduleRepository;
 import com.showback.repository.VenueRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,22 @@ public class ShowService {
     }
 
     @Transactional
+    public List<ShowDTO> findShowDTOByType(String type, Pageable pageable){
+
+        List<Show> shows = showRepository.findByType(type, pageable);
+
+        return shows.stream()
+                .map(show -> {
+                    try {
+                        return showMapper.toDTO(show);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public Show createShow(ShowDTO showDTO) throws JsonProcessingException {
 
         Venue venue = null;
@@ -69,7 +86,16 @@ public class ShowService {
             show.setShowSeats(showSeats);
         }
 
-        return showRepository.save(show);
+        showRepository.save(show);
+
+        ShowBannerDTO showBanners = showDTO.getShowBanners();
+        if(showBanners != null){
+            ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
+            showBanner.setShow(show);
+            showBannerRepository.save(showBanner);
+        }
+
+        return show;
     }
 
     @Transactional
@@ -112,6 +138,7 @@ public class ShowService {
     }
 
     @Transactional
+<<<<<<< HEAD
     public List<ShowDTO> searchShows(String keyword, List<String> types) throws JsonProcessingException {
 
 //        List<Show> shows = showRepository.searchShowsByKeyword(keyword);
@@ -142,6 +169,22 @@ public class ShowService {
         List<ShowDTO> filteredResults = new ArrayList<>();
         for (ShowDTO show : results) {
             String showType = show.getType();
+=======
+    public List<ShowBannerDTO> findAllShowBanner(Pageable pageable){
+        List<ShowBanner> showBanners = showBannerRepository.findByBannerUrlIsNotNullAndNotEmpty(pageable);
+        return showBanners.stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ShowBannerDTO> findAllSmallBanner(Pageable pageable){
+        List<ShowBanner> byBannerUrlIsNotNull = showBannerRepository.findBySmallBannerUrlIsNotNullAndNotEmpty(pageable);
+        return byBannerUrlIsNotNull.stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+>>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
 
             if (types.contains(showType)) {
                 filteredResults.add(show);

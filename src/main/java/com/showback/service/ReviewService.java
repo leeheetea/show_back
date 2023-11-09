@@ -34,11 +34,9 @@ public class ReviewService {
                 reviewDTO.setReviewGrade(review.getReviewGrade());
                 reviewDTO.setReviewText(review.getReviewText());
                 reviewDTO.setReviewTimestamp(review.getReviewTimestamp());
-                // Check if show is not null
                 if (review.getShow() != null) {
                     reviewDTO.setShowId(review.getShow().getShowId());
                 }
-                // Check if userAuth is not null
                 if (review.getUserAuth() != null) {
                     reviewDTO.setAuthEmail(review.getUserAuth().getAuthEmail());
                 }
@@ -59,16 +57,6 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-//    public Long updateReview(ReviewDTO reviewDTO) throws  JsonProcessingException{
-//        Review review = reviewRepository.findById(reviewDTO.getReviewId())
-//                .orElseThrow();
-//        review.setReviewText(reviewDTO.getReviewText());
-//        review.setReviewGrade(reviewDTO.getReviewGrade());
-//        review.setReviewTimestamp(reviewDTO.getReviewTimestamp());
-//
-//        return review.getReviewId();
-//
-//    }
     @Transactional
     public boolean updateReview(ReviewDTO reviewDTO) throws JsonProcessingException {
         Long reviewId = reviewDTO.getReviewId();
@@ -85,7 +73,6 @@ public class ReviewService {
             return false;
         }
     }
-
 
     public boolean deleteReview(Long reviewId) throws  JsonProcessingException{
         Review review = reviewRepository.findById(reviewId).orElse(null);
@@ -112,7 +99,6 @@ public class ReviewService {
         if (review.getShow() != null) {
             reviewDTO.setShowId(review.getShow().getShowId());
         }
-        // Check if userAuth is not null
         if (review.getUserAuth() != null) {
             reviewDTO.setAuthEmail(review.getUserAuth().getAuthEmail());
         }

@@ -22,6 +22,7 @@ public class Show {
 
     private String type;
 
+    @Column(length = 2000)
     private String contentDetail;
 
     private String thumbnailUrl;

@@ -41,8 +41,6 @@ public class ShowMapper {
         show.setThumbnailUrl(showDTO.getThumbnailUrl());
         show.setPeriod(showDTO.getPeriod());
         show.setPrice(showDTO.getPrice());
-        show.setShowBanner(showBanner);
-
 
         if (showDTO.getShowSchedules() != null) {
 

@@ -1,6 +1,7 @@
 package com.showback.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<LoginLog> loginLogs = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "user")
     private Password password;
 
@@ -37,9 +39,11 @@ public class User {
     private SocialLogin socialLogin;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<UserAgreement> userAgreements = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")
+    @JsonManagedReference
     private UserAuth userAuth;
 
 

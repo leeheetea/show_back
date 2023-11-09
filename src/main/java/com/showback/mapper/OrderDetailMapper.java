@@ -8,6 +8,7 @@ import com.showback.model.Seat;
 import com.showback.model.ShowSeat;
 import com.showback.repository.OrderRepository;
 import com.showback.repository.SeatRepository;
+import com.showback.repository.ShowSeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ public class OrderDetailMapper {
 
     private final OrderRepository orderRepository;
     private final ShowSeatMapper showSeatMapper;
+    private final ShowSeatRepository showSeatRepository;
 
     public OrderDetail toEntity(OrderDetailDTO orderDetailDTO){
 
@@ -28,11 +30,13 @@ public class OrderDetailMapper {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Order with ID " + orderDetailDTO.getOrderId() + " not found."));
 
-        ShowSeat showSeat = showSeatMapper.toEntity(orderDetailDTO.getShowSeats());
+        Long seatId = orderDetailDTO.getSeatId();
+        ShowSeat showSeat = showSeatRepository.findById(seatId)
+                .orElseThrow(EntityNotFoundException::new);
 
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setOrderDetailId(orderDetailDTO.getOrderDetailId());
-        orderDetail.setFinalPrice(orderDetailDTO.getFinalPrice());
+        orderDetail.setFinalPrice(orderDetailDTO.getPrice());
         orderDetail.setOrder(order);
         orderDetail.setShowSeat(showSeat);
 
@@ -43,7 +47,7 @@ public class OrderDetailMapper {
 
         OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
         orderDetailDTO.setOrderDetailId(orderDetail.getOrderDetailId());
-        orderDetailDTO.setFinalPrice(orderDetail.getFinalPrice());
+        orderDetailDTO.setPrice(orderDetail.getFinalPrice());
         orderDetailDTO.setOrderId(orderDetail.getOrder().getOrderId());
 
         return orderDetailDTO;

@@ -1,6 +1,7 @@
 package com.showback.security;
 
 import com.showback.model.User;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,16 +17,27 @@ public class TokenProvider {
 
     public String create(User userEntity, String ipAddress, String userAgent) {
         Date expireyDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
+        String socialCode = null;
+        if (userEntity.getSocialLogin() != null) {
+            socialCode = userEntity.getSocialLogin().getSocialCode();
+        }
 
-        return Jwts.builder()
+        JwtBuilder jwtBuilder = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .setSubject(userEntity.getUserId().toString())
                 .claim("ipAddress", ipAddress)
                 .claim("userAgent", userAgent)
+                .claim("loginType", userEntity.getLoginType())
+                .claim("username", userEntity.getUsername())
                 .setIssuer("showday")
                 .setIssuedAt(new Date())
-                .setExpiration(expireyDate)
-                .compact();
+                .setExpiration(expireyDate);
+
+        if(socialCode != null) {
+            jwtBuilder.claim("socialCode", socialCode);
+        }
+
+        return jwtBuilder.compact();
     }
 
     public String validateAndGetUserId (String token){
@@ -35,5 +47,14 @@ public class TokenProvider {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+    public boolean isTokenExpired(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+        Date expiration = claims.getExpiration();
+        return expiration.before(new Date());
     }
 }

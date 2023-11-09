@@ -1,6 +1,7 @@
 package com.showback.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +28,7 @@ public class Seat {
     @JsonBackReference
     private Venue venue;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "seat")
     private List<ShowSeat> showSeats = new ArrayList<>();
 

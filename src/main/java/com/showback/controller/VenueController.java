@@ -25,10 +25,15 @@ public class VenueController {
 
         return ResponseEntity.ok().body(venue);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
     @GetMapping("/{venueId}")
-    public ResponseEntity<VenueDTO> getVenue(@PathVariable("venueId") Long venueId)
-     throws JsonProcessingException {
-        VenueDTO venueDTO = venueService.findById(venueId);
+    public ResponseEntity<VenueDTO> findVenue(@PathVariable Long venueId){
+
+        VenueDTO venueDTO = venueService.findByVenue(venueId);
+
         return ResponseEntity.ok().body(venueDTO);
     }
 }

@@ -1,49 +1,63 @@
 package com.showback.service;
 
-import com.showback.dto.OrderDTO;
-import com.showback.mapper.OrderDetailMapper;
-import com.showback.mapper.ReservationMapper;
-import com.showback.model.*;
-import com.showback.repository.*;
-import org.junit.jupiter.api.BeforeEach;
+import com.showback.model.Order;
+import com.showback.dto.OrderDetailDTO;
+import com.showback.dto.OrderRequestDTO;
+import com.showback.model.UserAuth;
+import com.showback.repository.OrderRepository;
+import com.showback.repository.UserAuthRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
+import com.showback.model.OrderDetail;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
-import java.util.Collections;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class OrderServiceTest {
+
+    @Mock
+    private OrderRepository orderRepository;
+
+    @Mock
+    private UserAuthRepository userAuthRepository;
+
+    @Mock
+    private OrderDetailService orderDetailService;
 
     @InjectMocks
     private OrderService orderService;
 
-    @Mock
-    private OrderDetailRepository orderDetailRepository;
-    @Mock
-    private UserAuthRepository userAuthRepository;
-    @Mock
-    private OrderDetailMapper orderDetailMapper;
-    @Mock
-    private ReservationMapper reservationMapper;
-    @Mock
-    private ShowRepository showRepository;
-
-    @Mock
-    private ReservationRepository reservationRepository;
-
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
     }
 
     @Test
-    void createOrderTest() {
+    void testCreateOrder() {
+        // Arrange
+        Long userId = 1L;
+        OrderRequestDTO orderRequestDTO = new OrderRequestDTO(); // populate DTO
+        UserAuth mockUserAuth = new UserAuth(); // assuming existence of a no-arg constructor
+        when(userAuthRepository.findById(userId)).thenReturn(Optional.of(mockUserAuth));
+        when(orderDetailService.createOrderDetail(any(OrderDetailDTO.class))).thenReturn(new OrderDetail());
+
+        // Act
+        Order result;
+        result = orderService.createOrder(orderRequestDTO);
+
+        // Assert
+        verify(userAuthRepository).findById(userId);
+        verify(orderDetailService, times(orderRequestDTO.getSelectedSeats().size())).createOrderDetail(any(OrderDetailDTO.class));
+        verify(orderRepository).save(any(Order.class));
     }
 }

@@ -45,9 +45,6 @@ public class ReviewController {
     public ResponseEntity<List<ReviewDTO>> ReadReview(@PathVariable("showId") Long showId){
 
         List<ReviewDTO> reviewDTOList = reviewService.findReviewDTOById(showId);
-//        if (reviewDTOList == null || reviewDTOList.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없음");
-//        }
         return ResponseEntity.ok().body(reviewDTOList);
     }
 
