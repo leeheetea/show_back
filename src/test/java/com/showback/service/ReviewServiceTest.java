@@ -44,7 +44,7 @@ public class ReviewServiceTest {
         reviewDTO.setReviewText("test text");
         reviewDTO.setReviewGrade(5);
         reviewDTO.setReviewTimestamp(LocalDateTime.now());
-        reviewDTO.setShowId(1101L);
+        reviewDTO.setShowId(1L);
 
         Review createdReview = reviewService.createReview(reviewDTO, userId);
     }
