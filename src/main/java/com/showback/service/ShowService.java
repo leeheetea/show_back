@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -138,19 +139,7 @@ public class ShowService {
     }
 
     @Transactional
-<<<<<<< HEAD
     public List<ShowDTO> searchShows(String keyword, List<String> types) throws JsonProcessingException {
-
-//        List<Show> shows = showRepository.searchShowsByKeyword(keyword);
-//        List<ShowDTO> results = new ArrayList<>();
-//        for (Show show : shows) {
-//            results.add(showMapper.toDTO(show));
-//        }
-//
-//        if (types != null && !types.isEmpty()) {
-//            results = filterShowsByType(results, types);
-//        }
-//        return results;
         List<Show> shows;
         if (types != null && !types.isEmpty()) {
             shows = showRepository.searchShowsByKeywordAndType(keyword, types.get(0));
@@ -169,7 +158,15 @@ public class ShowService {
         List<ShowDTO> filteredResults = new ArrayList<>();
         for (ShowDTO show : results) {
             String showType = show.getType();
-=======
+
+
+            if (types.contains(showType)) {
+                filteredResults.add(show);
+            }
+        }
+        return filteredResults;
+    }
+
     public List<ShowBannerDTO> findAllShowBanner(Pageable pageable){
         List<ShowBanner> showBanners = showBannerRepository.findByBannerUrlIsNotNullAndNotEmpty(pageable);
         return showBanners.stream()
@@ -183,13 +180,5 @@ public class ShowService {
         return byBannerUrlIsNotNull.stream()
                 .map(showBannerMapper::toDTO)
                 .collect(Collectors.toList());
-    }
->>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
-
-            if (types.contains(showType)) {
-                filteredResults.add(show);
-            }
-        }
-        return filteredResults;
     }
 }

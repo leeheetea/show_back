@@ -83,8 +83,6 @@ public class ShowController {
         return ResponseEntity.ok().body(showSeats);
     }
 
-<<<<<<< HEAD
-=======
     @GetMapping("/banner")
     public ResponseEntity<?> getShowBanner(
             @RequestParam int page,
@@ -107,5 +105,4 @@ public class ShowController {
 
         return ResponseEntity.ok().body(allShowBanner);
     }
->>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
 }

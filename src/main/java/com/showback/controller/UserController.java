@@ -149,24 +149,23 @@ public class UserController {
         return  ResponseEntity.badRequest().body("User not found");
     }
 
-<<<<<<< HEAD
+
     //유저 email 정보
     @GetMapping("/email")
     public String readUserEmail(HttpServletRequest request) {
-=======
-    // getUserData
-    @PostMapping("/userinfo/authentication")
-    public ResponseEntity<?> getUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
->>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         String userIdStr = tokenProvider.validateAndGetUserId(token);
         Long userId = Long.parseLong(userIdStr);
-
-<<<<<<< HEAD
         String Email = userService.getByEmail(userId);
-
         return(Email);
-=======
+    }
+
+    // getUserData
+    @PostMapping("/userinfo/authentication")
+    public ResponseEntity<?> getUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String userIdStr = tokenProvider.validateAndGetUserId(token);
+        Long userId = Long.parseLong(userIdStr);
         if(userId != null) {
             UserDTO responseDTO = userService.verifyPasswordBeforeGetUser(userId, userDTO.getPassword(), passwordEncoder);
             if (responseDTO != null) {
@@ -189,16 +188,13 @@ public class UserController {
     }
 
     @PostMapping("/name/request")
-    public ResponseEntity<?> getName(HttpServletRequest request){
+    public ResponseEntity<?> getName(HttpServletRequest request) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
 
         String userIdStr = tokenProvider.validateAndGetUserId(token);
         Long userId = Long.parseLong(userIdStr);
 
         String name = userService.findName(userId);
-        return  ResponseEntity.ok().body(name);
->>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
+        return ResponseEntity.ok().body(name);
     }
-
-
 }

@@ -33,9 +33,6 @@ public class OrderService {
 
         List<SelectedSeatsDTO> selectedSeats = orderRequestDTO.getSelectedSeats();
 
-<<<<<<< HEAD
-       return null;
-=======
         Order order = new Order();
         order.setTicketAmount(selectedSeats.size());
         order.setOrderState(OrderState.PENDING);
@@ -51,6 +48,5 @@ public class OrderService {
         orderRepository.save(order);
 
         return order;
->>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
     }
 }

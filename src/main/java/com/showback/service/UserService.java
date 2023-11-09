@@ -224,12 +224,11 @@ public class UserService {
         return null;
     }
 
-<<<<<<< HEAD
     public String getByEmail(Long userId) {
         UserAuth userAuth = userAuthRepository.findByUserId(userId);
         String userEmail = userAuth.getAuthEmail();
         return userEmail;
-=======
+    }
     public UserDTO verifyPasswordBeforeGetUser(Long userId, String password, PasswordEncoder passwordEncoder) {
         Password passwordEntity = passwordRepository.findByUser_UserId(userId);
 
@@ -306,7 +305,6 @@ public class UserService {
         UserAuth userAuth = userAuthRepository.findByUser_UserId(userId);
 
         return userAuth.getAuthName();
->>>>>>> e850a8de59c2c64fd2e344482c803febaa17c56e
     }
 }
 
