@@ -131,7 +131,6 @@ public class AuthService {
 //        user.setLoginType(1);
 //        userRepository.save(user);
 
-//        socialLogin.setSocialCode(payloadJson.getString("iss"));
 //        socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
 //        socialLogin.setUser(user);
 //        socialLoginRepository.save(socialLogin);
@@ -142,7 +141,6 @@ public class AuthService {
             userRepository.save(user);
 
             socialLogin.setAccessToken(socialLoginDTO.getAccess_token());
-//            socialLogin.setSocialCode(payloadJson.getString("iss"));
             socialLogin.setSocialCode("kakao");
             socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
             socialLogin.setUser(user);

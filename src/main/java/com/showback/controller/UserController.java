@@ -30,27 +30,6 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
 
-//        User userEntity = new User();
-//        userEntity.setUsername(userDTO.getUsername());
-//
-//        Password passwordEntity = new Password();
-//        passwordEntity.setUser(userEntity);
-//        passwordEntity.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
-//
-//        UserAuth userAuthEntity = new UserAuth();
-//        userAuthEntity.setUser(userEntity);
-//        userAuthEntity.setAuthName(userDTO.getName());
-//        userAuthEntity.setAuthEmail(userDTO.getEmail());
-//        userAuthEntity.setAuthPhone(userDTO.getPhone());
-//        userAuthEntity.setSmsChoice(userDTO.isSmscheck());
-//        userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
-//
-//        userService.register(userEntity, passwordEntity, userAuthEntity);
-//
-//        UserDTO responseUserDTO = new UserDTO();
-//        responseUserDTO.setName(userDTO.getName());
-//
-//        return ResponseEntity.ok().body(responseUserDTO);
         UserDTO responseUserDTO = userService.register(userDTO);
         return ResponseEntity.ok().body(responseUserDTO);
     }

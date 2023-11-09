@@ -1,10 +1,14 @@
 package com.showback.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.OptimisticLockException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,5 +20,24 @@ public class GlobalExceptionHandler {
         return exception.getMessage();
     }
 
-    // 예외 핸들러 추가
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 리소스를 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalState(IllegalStateException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGeneralException(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 에러가 발생했습니다.");
+    }
+
+    @ExceptionHandler(OptimisticLockException.class)
+    public ResponseEntity<Object> handleOptimisticLockException(OptimisticLockException e) {
+        String error = "요청 처리 중 데이터가 변경되었습니다. 다시 시도하세요.";
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
 }

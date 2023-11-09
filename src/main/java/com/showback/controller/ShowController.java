@@ -28,7 +28,6 @@ import java.util.List;
 public class ShowController {
 
     private final ShowService showService;
-
     private final ShowSeatService showSeatService;
 
     @PostMapping

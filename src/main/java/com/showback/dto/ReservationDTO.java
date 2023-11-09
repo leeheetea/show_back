@@ -1,7 +1,10 @@
 package com.showback.dto;
 
+import com.showback.domain.OrderState;
 import lombok.Data;
+import net.bytebuddy.asm.Advice;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -9,9 +12,9 @@ public class ReservationDTO {
 
     private Long reservationId;
 
-    private Date reservationDate;
+    private LocalDate reservationDate;
 
-    private String reservationState;
+    private OrderState reservationState;
 
     private String reservationShowName;
 

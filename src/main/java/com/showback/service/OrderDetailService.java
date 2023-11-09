@@ -7,6 +7,7 @@ import com.showback.repository.OrderDetailRepository;
 import com.showback.repository.ShowSeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
@@ -18,12 +19,17 @@ public class OrderDetailService {
     private final OrderDetailRepository orderDetailRepository;
     private final ShowSeatRepository showSeatRepository;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public OrderDetail createOrderDetail(OrderDetailDTO orderDetailDTO) {
 
         Long showSeatId = orderDetailDTO.getSeatId();
+
         ShowSeat showSeat = showSeatRepository.findById(showSeatId)
                 .orElseThrow(() -> new EntityNotFoundException("ShowSeat not found for id: " + showSeatId));
+
+        if (!showSeat.isCanReservation()) {
+            throw new IllegalStateException("선택한  " + showSeatId + " 번 좌석은 이미 예약되어 있습니다.");
+        }
 
         showSeat.setCanReservation(false);
 

@@ -13,14 +13,6 @@ import java.util.List;
 @Repository
 public interface ShowSeatRepository extends JpaRepository<ShowSeat, Long>, ShowSeatCustomRepository {
 
-//    @Query("SELECT ss FROM ShowSeat ss " +
-//            "JOIN ss.show sh " +
-//            "JOIN sh.showSchedules sc " +
-//            "WHERE sh.showId = :showId AND sc.scheduleDate = :showDate AND sc.scheduleTime = :showTime")
-//    List<ShowSeat> findShowSeatsByShowAndSchedule(
-//            @Param("showId") Long showId,
-//            @Param("showDate") Date showDate,
-//            @Param("showTime") Time showTime);
 
 
 }
