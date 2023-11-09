@@ -33,33 +33,13 @@ public class AuthController {
         String userAgent = request.getHeader("User-Agent");
 
         String code = request.getParameter("code");
-//        System.out.println("------------------------------------------code = " + code);
-//        String kakaoAccessToken = authService.getKakaoAccessToken(code);
         SocialLoginDTO socialLoginDTO = authService.getKakaoAccessToken(code);
-//        String token = socialLoginDTO.getAccess_token();
-//        System.out.println("-token = " + token);
         String socialUserIdFromProvider = authService.socialLoginInfo(socialLoginDTO);
-//        System.out.println("-------------------socialUserIdFromProvider = " + socialUserIdFromProvider);
 
-//        System.out.println("kakdoAccessToken = " + kakaoAccessToken);
-//        return authService.kakaoLogin(kakdoAccessToken);
         if(socialUserIdFromProvider != null) {
-//            return ResponseEntity.ok().body(Map.of("kakaoAccessToken", kakaoAccessToken));
-//            return ResponseEntity.ok().body(token);
-            //231103
-//            String ipAddress =  request.getRemoteAddr();
-//            String userAgent = request.getHeader("User-Agent");
-//            User userEntity = authService.getByCredentials(socialUserIdFromProvider);
-////
-//            final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
-//            System.out.println("----------------------token = " + token);
-//            final UserDTO responseUserDTO = UserDTO.builder()
-//                    .username(socialUserIdFromProvider)
-//                    .token(token)
-//                    .build();
 
             if (!socialUserIdFromProvider.contains("@")) {
-                // socialUserIdFromProvider = username
+                // socialUserIdFromProvider => username
                 User userEntity = authService.getByCredentials(socialUserIdFromProvider, ipAddress, userAgent);
                 final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
                 final UserDTO responseUserDTO = UserDTO.builder()
@@ -117,10 +97,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.FOUND).location(kakaoLogoutUri).build();
     }
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-
+    // naver
     @PostMapping("/oauth/naver")
     public ResponseEntity<?> naverLogin(@RequestBody SocialLoginDTO socialLoginDTO, HttpServletRequest request) throws JsonProcessingException {
         String ipAddress = request.getRemoteAddr();
@@ -133,7 +110,7 @@ public class AuthController {
                 String usernameOrEmail = authService.naverLogin(userEmail, getAccessToken);
 
                 if (!usernameOrEmail.contains("@")) {
-                    // socialUserIdFromProvider = username
+                    // socialUserIdFromProvider => username
                     User userEntity = authService.getByCredentials(usernameOrEmail, ipAddress, userAgent);
                     final String token = tokenProvider.create(userEntity, ipAddress, userAgent);
                     final UserDTO responseUserDTO = UserDTO.builder()
