@@ -32,6 +32,8 @@ public class QShowSeat extends EntityPathBase<ShowSeat> {
 
     public final NumberPath<Long> showSeatId = createNumber("showSeatId", Long.class);
 
+    public final NumberPath<Integer> version = createNumber("version", Integer.class);
+
     public QShowSeat(String variable) {
         this(ShowSeat.class, forVariable(variable), INITS);
     }

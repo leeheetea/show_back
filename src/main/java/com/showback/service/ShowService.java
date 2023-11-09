@@ -16,6 +16,7 @@ import com.showback.repository.ShowRepository;
 import com.showback.repository.ShowScheduleRepository;
 import com.showback.repository.VenueRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,9 +50,9 @@ public class ShowService {
     }
 
     @Transactional
-    public List<ShowDTO> findShowDTOByType(String type){
+    public List<ShowDTO> findShowDTOByType(String type, Pageable pageable){
 
-        List<Show> shows = showRepository.findByType(type);
+        List<Show> shows = showRepository.findByType(type, pageable);
 
         return shows.stream()
                 .map(show -> {
@@ -86,7 +87,16 @@ public class ShowService {
             show.setShowSeats(showSeats);
         }
 
-        return showRepository.save(show);
+        showRepository.save(show);
+
+        ShowBannerDTO showBanners = showDTO.getShowBanners();
+        if(showBanners != null){
+            ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
+            showBanner.setShow(show);
+            showBannerRepository.save(showBanner);
+        }
+
+        return show;
     }
 
     @Transactional
@@ -129,16 +139,16 @@ public class ShowService {
     }
 
     @Transactional
-    public List<ShowBannerDTO> findAllShowBanner(){
-        List<ShowBanner> showBanners = showBannerRepository.findAll();
+    public List<ShowBannerDTO> findAllShowBanner(Pageable pageable){
+        List<ShowBanner> showBanners = showBannerRepository.findByBannerUrlIsNotNullAndNotEmpty(pageable);
         return showBanners.stream()
                 .map(showBannerMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<ShowBannerDTO> findAllSmallBanner(){
-        List<ShowBanner> byBannerUrlIsNotNull = showBannerRepository.findByBannerUrlIsNotNull();
+    public List<ShowBannerDTO> findAllSmallBanner(Pageable pageable){
+        List<ShowBanner> byBannerUrlIsNotNull = showBannerRepository.findBySmallBannerUrlIsNotNullAndNotEmpty(pageable);
         return byBannerUrlIsNotNull.stream()
                 .map(showBannerMapper::toDTO)
                 .collect(Collectors.toList());

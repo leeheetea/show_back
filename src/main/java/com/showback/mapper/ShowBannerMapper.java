@@ -23,12 +23,6 @@ public class ShowBannerMapper {
         showBanner.setBannerUrl(dto.getBannerUrl());
         showBanner.setSmallBannerUrl(dto.getSmallBannerUrl());
 
-        // Show 엔터티 참조 설정
-        if (dto.getShowId() != null) {
-            Show show = showRepository.findById(dto.getShowId()).orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-            showBanner.setShow(show);
-        }
-
         return showBanner;
     }
 
@@ -45,6 +39,4 @@ public class ShowBannerMapper {
         }
         return dto;
     }
-
-
 }

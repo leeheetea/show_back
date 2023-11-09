@@ -28,7 +28,7 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final NumberPath<Long> orderId = createNumber("orderId", Long.class);
 
-    public final StringPath orderState = createString("orderState");
+    public final EnumPath<com.showback.domain.OrderState> orderState = createEnum("orderState", com.showback.domain.OrderState.class);
 
     public final QReservation reservation;
 
