@@ -1,15 +1,12 @@
 package com.showback.service;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.showback.dto.SocialLoginDTO;
-import com.showback.dto.UserDTO;
 import com.showback.model.LoginLog;
-import com.showback.model.Password;
 import com.showback.model.SocialLogin;
 import com.showback.model.User;
 import com.showback.repository.LoginLogRepository;
@@ -24,20 +21,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 
 @Service
@@ -94,13 +86,11 @@ public class AuthService {
         SocialLoginDTO socialLoginDTO;
         try {
             socialLoginDTO = objectMapper.readValue(accessTokenResponse.getBody(), SocialLoginDTO.class);
-//            return socialLoginDTO.getAccess_token();
             return socialLoginDTO;
         } catch (JsonProcessingException e) {
             log.error("Error Kakao Access Token");
             return null;
         }
-//        return accessTokenResponse.getBody();
     }
 
     public String socialLoginInfo(SocialLoginDTO socialLoginDTO) {
@@ -110,39 +100,25 @@ public class AuthService {
         String idToken = socialLoginDTO.getId_token();
         String[] splitIdToken = idToken.split("\\.");
         String payload = new String(Base64.getDecoder().decode(splitIdToken[1]));
-//        System.out.println("payload = " + payload);
         JSONObject payloadJson = new JSONObject(payload);
 
         SocialLogin existingSocialLogin = socialLoginRepository.findBySocialUserIdFromProvider(payloadJson.getString("email"));
         // if social join already done
         if (existingSocialLogin != null) {
             System.out.println("----already join");
-            // token update ?
+            // token update
             existingSocialLogin.setAccessToken(socialLoginDTO.getAccess_token());
             socialLoginRepository.save(existingSocialLogin);
             User associatedUser = existingSocialLogin.getUser();
 
             return associatedUser.getUsername();
-        }
-
-        // new social join
-//        User user = new User();
-//        user.setUsername(payloadJson.getString("email"));
-//        user.setLoginType(1);
-//        userRepository.save(user);
-
-//        socialLogin.setSocialCode(payloadJson.getString("iss"));
-//        socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
-//        socialLogin.setUser(user);
-//        socialLoginRepository.save(socialLogin);
-        else {
+        }else {
             System.out.println("----new join");
             User user = new User();
             user.setLoginType(1);
             userRepository.save(user);
 
             socialLogin.setAccessToken(socialLoginDTO.getAccess_token());
-//            socialLogin.setSocialCode(payloadJson.getString("iss"));
             socialLogin.setSocialCode("kakao");
             socialLogin.setSocialUserIdFromProvider(payloadJson.getString("email"));
             socialLogin.setUser(user);
@@ -183,8 +159,6 @@ public class AuthService {
             loginLogRepository.save(loginLog);
             return null;
         }
-
-//        return userRepository.findByUsername(username);
     }
 
 
@@ -198,7 +172,6 @@ public class AuthService {
         return null;
     }
 
-    //https://kauth.kakao.com/oauth/logout?client_id=98fb1054fadbc801e5b9337e8492549d&logout_redirect_uri=http://localhost:3000/user/oauth/kakao/logout
     public URI initiateKakaoLogout() {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(KAKAO_OAUTH_LOGOUT_URI)
                 .queryParam("client_id", KAKAO_CLINET_ID)
@@ -206,13 +179,9 @@ public class AuthService {
         return builder.build().toUri();
     }
 
-
-    /////////////////////////////////////////////////////////////////
-
-        public SocialLoginDTO getNaverAccessToken(String code, String state){
+    public SocialLoginDTO getNaverAccessToken(String code, String state){
         String tokenUrl = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id="
                 + NAVER_CLINET_ID + "&client_secret=" + NAVER_CLIENT_SECRET + "&code=" + code + "&state=" + state;
-//        System.out.println("tokenUrl = " + tokenUrl);
         RestTemplate restTemplate = new RestTemplate();
         String tokenResponse = restTemplate.getForObject(tokenUrl, String.class);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -244,10 +213,7 @@ public class AuthService {
         ResponseEntity<String> responseEntity = restTemplate.exchange(apiURL, HttpMethod.GET, entity, String.class);
         String responseBody = responseEntity.getBody();
         System.out.println("responseBody = " + responseBody);
-        //responseBody = {
-        // "resultcode":"00",
-        // "message":"success",
-        // "response":{"id":"wjEEDI6Flzc8YnQCt0pOe-6VvaBH0Arf44tW9UlUK8M","email":"toyandy@hanmir.com","mobile":"010-6266-0491","mobile_e164":"+821062660491","name":"\uae40\uc7ac\ud6c8","birthyear":"1995"}}
+
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(responseBody);
         JsonNode responseNode = rootNode.path("response");
@@ -264,7 +230,7 @@ public class AuthService {
         // if naver join already done
         if (existingSocialLogin != null) {
             System.out.println("----already naver join");
-            // token update ?
+            // token update
             existingSocialLogin.setAccessToken(socialLoginDTO.getAccess_token());
             socialLoginRepository.save(existingSocialLogin);
             User associatedUser = existingSocialLogin.getUser();

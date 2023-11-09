@@ -4,10 +4,8 @@ import com.showback.dto.UserDTO;
 import com.showback.model.LoginLog;
 import com.showback.model.Password;
 import com.showback.model.User;
-import com.showback.model.UserAuth;
 import com.showback.security.TokenProvider;
 import com.showback.service.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,27 +28,6 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO){
 
-//        User userEntity = new User();
-//        userEntity.setUsername(userDTO.getUsername());
-//
-//        Password passwordEntity = new Password();
-//        passwordEntity.setUser(userEntity);
-//        passwordEntity.setUserPassword(passwordEncoder.encode(userDTO.getPassword()));
-//
-//        UserAuth userAuthEntity = new UserAuth();
-//        userAuthEntity.setUser(userEntity);
-//        userAuthEntity.setAuthName(userDTO.getName());
-//        userAuthEntity.setAuthEmail(userDTO.getEmail());
-//        userAuthEntity.setAuthPhone(userDTO.getPhone());
-//        userAuthEntity.setSmsChoice(userDTO.isSmscheck());
-//        userAuthEntity.setValidatePeriod(userDTO.getIsRadioChecked());
-//
-//        userService.register(userEntity, passwordEntity, userAuthEntity);
-//
-//        UserDTO responseUserDTO = new UserDTO();
-//        responseUserDTO.setName(userDTO.getName());
-//
-//        return ResponseEntity.ok().body(responseUserDTO);
         UserDTO responseUserDTO = userService.register(userDTO);
         return ResponseEntity.ok().body(responseUserDTO);
     }
@@ -126,15 +103,10 @@ public class UserController {
             HttpServletRequest request,
             @RequestBody UserDTO userDTO) {
 
-        // 헤더에서 토큰 추출
         String token = request.getHeader("Authorization").replace("Bearer ", "");
 
-        // 토큰에서 userId 추출
         String userIdStr = tokenProvider.validateAndGetUserId(token);
-        Long userId = Long.parseLong(userIdStr);  // String에서 Long으로 변환
-
-        // userService를 확장하여 userId를 기반으로 User 엔티티를 반환하는 메서드를 추가합니다.
-//        User userEntity = userService.findByUserId(userId);
+        Long userId = Long.parseLong(userIdStr);
 
         if(userId != null) {
             userService.updatePasswordByUserId(userId, userDTO.getPassword(), passwordEncoder);
@@ -177,7 +149,7 @@ public class UserController {
         return  ResponseEntity.badRequest().body("User not found");
     }
 
-    //
+    // getUserData
     @PostMapping("/userinfo/authentication")
     public ResponseEntity<?> getUser(HttpServletRequest request, @RequestBody UserDTO userDTO) {
         String token = request.getHeader("Authorization").replace("Bearer ", "");
