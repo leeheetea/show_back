@@ -139,6 +139,34 @@ public class ShowService {
     }
 
     @Transactional
+    public List<ShowDTO> searchShows(String keyword, List<String> types) throws JsonProcessingException {
+        List<Show> shows;
+        if (types != null && !types.isEmpty()) {
+            shows = showRepository.searchShowsByKeywordAndType(keyword, types.get(0));
+        } else {
+            shows = showRepository.searchShowsByKeyword(keyword);
+        }
+
+        List<ShowDTO> results = new ArrayList<>();
+        for (Show show : shows) {
+            results.add(showMapper.toDTO(show));
+        }
+        return results;
+    }
+
+    private List<ShowDTO> filterShowsByType(List<ShowDTO> results, List<String> types) {
+        List<ShowDTO> filteredResults = new ArrayList<>();
+        for (ShowDTO show : results) {
+            String showType = show.getType();
+
+
+            if (types.contains(showType)) {
+                filteredResults.add(show);
+            }
+        }
+        return filteredResults;
+    }
+
     public List<ShowBannerDTO> findAllShowBanner(Pageable pageable){
         List<ShowBanner> showBanners = showBannerRepository.findByBannerUrlIsNotNullAndNotEmpty(pageable);
         return showBanners.stream()
@@ -153,5 +181,4 @@ public class ShowService {
                 .map(showBannerMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
 }

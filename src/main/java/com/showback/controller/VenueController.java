@@ -25,7 +25,6 @@ public class VenueController {
 
         return ResponseEntity.ok().body(venue);
     }
-
     @GetMapping("/{venueId}")
     public ResponseEntity<VenueDTO> findVenue(@PathVariable Long venueId){
 
