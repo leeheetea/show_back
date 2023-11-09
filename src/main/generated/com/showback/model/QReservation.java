@@ -22,23 +22,23 @@ public class QReservation extends EntityPathBase<Reservation> {
 
     public static final QReservation reservation = new QReservation("reservation");
 
+    public final DatePath<java.time.LocalDate> date = createDate("date", java.time.LocalDate.class);
+
     public final QOrder order;
 
-    public final DateTimePath<java.util.Date> reservationDate = createDateTime("reservationDate", java.util.Date.class);
+    public final NumberPath<Integer> price = createNumber("price", Integer.class);
 
     public final NumberPath<Long> reservationId = createNumber("reservationId", Long.class);
 
-    public final NumberPath<Integer> reservationPrice = createNumber("reservationPrice", Integer.class);
-
-    public final StringPath reservationShowName = createString("reservationShowName");
-
-    public final StringPath reservationShowVenue = createString("reservationShowVenue");
-
-    public final StringPath reservationState = createString("reservationState");
-
-    public final NumberPath<Integer> reservationTicketAmount = createNumber("reservationTicketAmount", Integer.class);
-
     public final QShow show;
+
+    public final StringPath showName = createString("showName");
+
+    public final StringPath showVenue = createString("showVenue");
+
+    public final EnumPath<com.showback.domain.OrderState> state = createEnum("state", com.showback.domain.OrderState.class);
+
+    public final NumberPath<Integer> ticketAmount = createNumber("ticketAmount", Integer.class);
 
     public QReservation(String variable) {
         this(Reservation.class, forVariable(variable), INITS);

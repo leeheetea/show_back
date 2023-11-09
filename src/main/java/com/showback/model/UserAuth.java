@@ -1,5 +1,7 @@
 package com.showback.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.showback.model.Order;
 import lombok.Data;
 import lombok.Getter;
@@ -37,9 +39,11 @@ public class UserAuth {
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "userAuth", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Order> orderList;
 
     @OneToMany(mappedBy = "userAuth", cascade = CascadeType.ALL)

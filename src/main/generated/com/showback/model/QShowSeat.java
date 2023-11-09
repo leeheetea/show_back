@@ -24,7 +24,7 @@ public class QShowSeat extends EntityPathBase<ShowSeat> {
 
     public final BooleanPath canReservation = createBoolean("canReservation");
 
-    public final QOrderDetail orderDetail;
+    public final ListPath<OrderDetail, QOrderDetail> orderDetails = this.<OrderDetail, QOrderDetail>createList("orderDetails", OrderDetail.class, QOrderDetail.class, PathInits.DIRECT2);
 
     public final QSeat seat;
 
@@ -52,7 +52,6 @@ public class QShowSeat extends EntityPathBase<ShowSeat> {
 
     public QShowSeat(Class<? extends ShowSeat> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.orderDetail = inits.isInitialized("orderDetail") ? new QOrderDetail(forProperty("orderDetail"), inits.get("orderDetail")) : null;
         this.seat = inits.isInitialized("seat") ? new QSeat(forProperty("seat"), inits.get("seat")) : null;
         this.show = inits.isInitialized("show") ? new QShow(forProperty("show"), inits.get("show")) : null;
     }

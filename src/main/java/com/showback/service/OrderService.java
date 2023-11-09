@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,22 +25,24 @@ public class OrderService {
     private final UserAuthRepository userAuthRepository;
     private final OrderDetailService orderDetailService;
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Order createOrder(OrderRequestDTO orderRequestDTO) {
+
         UserAuth userAuth = userAuthRepository.findById(orderRequestDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("UserAuth not found for id: " + orderRequestDTO.getUserId()));
 
+        List<SelectedSeatsDTO> selectedSeats = orderRequestDTO.getSelectedSeats();
+
         Order order = new Order();
-        order.setTicketAmount(orderRequestDTO.getSelectedSeats().size());
+        order.setTicketAmount(selectedSeats.size());
         order.setOrderState(OrderState.PENDING);
-        order.setOrderDate(new Date());
+        order.setOrderDate(LocalDate.now());
         order.setUserAuth(userAuth);
 
-        for (SelectedSeatsDTO selectedSeatDTO : orderRequestDTO.getSelectedSeats()) {
+        for (SelectedSeatsDTO selectedSeatDTO : selectedSeats) {
             OrderDetail orderDetail = orderDetailService
                     .createOrderDetail(selectedSeatDTO.toOrderDetailDTO());
-            orderDetail.setOrder(order);
-            order.addOrderDetail(orderDetail);
+            order.addOrderDetail(orderDetail);  // 여기서 orderDetail의 order가 설정됩니다.
         }
 
         orderRepository.save(order);

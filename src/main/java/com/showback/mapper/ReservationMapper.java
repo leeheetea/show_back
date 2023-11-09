@@ -30,12 +30,12 @@ public class ReservationMapper {
 
         Reservation reservation = new Reservation();
         reservation.setReservationId(reservationDTO.getReservationId());
-        reservation.setReservationDate(reservationDTO.getReservationDate());
-        reservation.setReservationState(reservationDTO.getReservationState());
-        reservation.setReservationShowName(reservationDTO.getReservationShowName());
-        reservation.setReservationShowVenue(reservationDTO.getReservationShowVenue());
-        reservation.setReservationPrice(reservationDTO.getReservationPrice());
-        reservation.setReservationTicketAmount(reservationDTO.getReservationTicketAmount());
+        reservation.setDate(reservationDTO.getReservationDate());
+        reservation.setState(reservationDTO.getReservationState());
+        reservation.setShowName(reservationDTO.getReservationShowName());
+        reservation.setShowVenue(reservationDTO.getReservationShowVenue());
+        reservation.setPrice(reservationDTO.getReservationPrice());
+        reservation.setTicketAmount(reservationDTO.getReservationTicketAmount());
         reservation.setOrder(order);
         reservation.setShow(show);
 
@@ -46,12 +46,12 @@ public class ReservationMapper {
     public ReservationDTO toDTO(Reservation reservation) {
         ReservationDTO reservationDTO = new ReservationDTO();
         reservationDTO.setReservationId(reservation.getReservationId());
-        reservationDTO.setReservationDate(reservation.getReservationDate());
-        reservationDTO.setReservationState(reservation.getReservationState());
-        reservationDTO.setReservationShowName(reservation.getReservationShowName());
-        reservationDTO.setReservationShowVenue(reservation.getReservationShowVenue());
-        reservationDTO.setReservationPrice(reservation.getReservationPrice());
-        reservationDTO.setReservationTicketAmount(reservation.getReservationTicketAmount());
+        reservationDTO.setReservationDate(reservation.getDate());
+        reservationDTO.setReservationState(reservation.getState());
+        reservationDTO.setReservationShowName(reservation.getShowName());
+        reservationDTO.setReservationShowVenue(reservation.getShowVenue());
+        reservationDTO.setReservationPrice(reservation.getPrice());
+        reservationDTO.setReservationTicketAmount(reservation.getTicketAmount());
         reservationDTO.setOrderId(reservation.getOrder().getOrderId());
         reservationDTO.setShowId(reservation.getShow().getShowId());
 

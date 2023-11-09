@@ -1,9 +1,11 @@
 package com.showback.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.showback.domain.OrderState;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -20,17 +22,17 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reservationId;
 
-    private Date reservationDate;
+    private LocalDate date;
 
-    private String reservationState;
+    private OrderState state;
 
-    private String reservationShowName;
+    private String showName;
 
-    private String reservationShowVenue;
+    private String showVenue;
 
-    private int reservationPrice;
+    private int price;
 
-    private int reservationTicketAmount;
+    private int ticketAmount;
 
     @OneToOne
     @JoinColumn(name = "order_id")

@@ -30,6 +30,8 @@ public class QOrderDetail extends EntityPathBase<OrderDetail> {
 
     public final QShowSeat showSeat;
 
+    public final NumberPath<Long> version = createNumber("version", Long.class);
+
     public QOrderDetail(String variable) {
         this(OrderDetail.class, forVariable(variable), INITS);
     }
