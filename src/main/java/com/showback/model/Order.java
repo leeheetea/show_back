@@ -1,5 +1,6 @@
 package com.showback.model;
 
+import com.showback.domain.OrderState;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,7 @@ public class Order {
 
     private int ticketAmount;
 
-    private String orderState;
+    private OrderState orderState;
 
     private Date orderDate;
 
@@ -28,9 +29,14 @@ public class Order {
     @JoinColumn(name = "auth_id")
     private UserAuth userAuth;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @OneToOne(mappedBy = "order")
     private Reservation reservation;
+
+    public void addOrderDetail(OrderDetail orderDetail) {
+        this.orderDetails.add(orderDetail);
+        orderDetail.setOrder(this);
+    }
 }

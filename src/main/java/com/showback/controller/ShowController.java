@@ -3,21 +3,20 @@ package com.showback.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.showback.dto.ShowBannerDTO;
 import com.showback.dto.ShowDTO;
-import com.showback.dto.ShowScheduleDTO;
 import com.showback.dto.ShowSeatDTO;
 import com.showback.exception.ShowNotFoundException;
 import com.showback.model.Show;
-import com.showback.model.ShowBanner;
-import com.showback.model.ShowSchedule;
-import com.showback.model.ShowSeat;
 import com.showback.service.ShowSeatService;
 import com.showback.service.ShowService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -45,23 +44,27 @@ public class ShowController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ShowDTO>> getShowByType(@RequestParam String type) throws JsonProcessingException {
+    public ResponseEntity<List<ShowDTO>> getShowByType(@RequestParam String type,
+                                                       @RequestParam int page,
+                                                       @RequestParam int size) throws JsonProcessingException {
 
-        List<ShowDTO> showDTOByType = showService.findShowDTOByType(type);
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<ShowDTO> showDTOByType = showService.findShowDTOByType(type, pageable);
 
         return ResponseEntity.ok().body(showDTOByType);
     }
 
     @GetMapping("/{showId}")
-    public ResponseEntity<ShowDTO> getShowById(@PathVariable("showId") Long showId) throws JsonProcessingException {
+    public ResponseEntity<ShowDTO> getShowById(@PathVariable("showId") Long showId
+            ) throws JsonProcessingException {
+
         ShowDTO showDTO = showService.findShowDTOById(showId);
         if (showDTO == null) {
             throw new ShowNotFoundException(showId);
         }
         return ResponseEntity.ok(showDTO);
     }
-
-
 
     @PostMapping("/{showId}")
     public ResponseEntity<?> updateShow(@RequestBody ShowDTO showDTO, @PathVariable("showId") Long showId) throws JsonProcessingException {
@@ -82,17 +85,24 @@ public class ShowController {
     }
 
     @GetMapping("/banner")
-    public ResponseEntity<?> getShowBanner(){
+    public ResponseEntity<?> getShowBanner(
+            @RequestParam int page,
+            @RequestParam int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
 
-        List<ShowBannerDTO> allShowBanner = showService.findAllShowBanner();
+        List<ShowBannerDTO> allShowBanner = showService.findAllShowBanner(pageable);
 
         return ResponseEntity.ok().body(allShowBanner);
     }
 
     @GetMapping("/small-banner")
-    public ResponseEntity<?> getShowSmallBanner(){
-
-        List<ShowBannerDTO> allShowBanner = showService.findAllSmallBanner();
+    public ResponseEntity<?> getShowSmallBanner(
+            @RequestParam int page,
+            @RequestParam int size)
+    {
+        Pageable pageable = PageRequest.of(page, size);
+        List<ShowBannerDTO> allShowBanner = showService.findAllSmallBanner(pageable);
 
         return ResponseEntity.ok().body(allShowBanner);
     }
