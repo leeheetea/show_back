@@ -5,8 +5,6 @@ import com.showback.model.*;
 import com.showback.repository.*;
 import com.showback.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,9 +31,6 @@ public class UserService {
 
     // join
     public UserDTO register(UserDTO userDTO) {
-//        userRepository.save(userEntity);
-//        passwordRepository.save(passwordEntity);
-//        userAuthRepository.save(userAuthEntity);
 
         User userSocialEntity = userRepository.findByLoginTypeAndUsernameIsNull(1);
         if(userSocialEntity != null) {
@@ -191,7 +184,6 @@ public class UserService {
     public Password updatePasswordByUsername(final String username, final String newPassword, PasswordEncoder passwordEncoder) {
         final Password passwordEntity = passwordRepository.findByUser_Username(username);
 
-//        if(passwordEntity != null && passwordEncoder.matches(newPassword, passwordEntity.getUserPassword())) {
         if(passwordEntity != null){
             passwordEntity.setUserPassword(passwordEncoder.encode(newPassword));
             passwordRepository.save(passwordEntity);
