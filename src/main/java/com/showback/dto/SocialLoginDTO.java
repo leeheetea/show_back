@@ -1,5 +1,6 @@
 package com.showback.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,7 @@ public class SocialLoginDTO {
     private int expires_in;
     private int refresh_token_expires_in;
     private String scope;
+
+    private String code;
+    private String state;
 }

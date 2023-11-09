@@ -20,9 +20,11 @@ public class QTermsOfService extends EntityPathBase<TermsOfService> {
 
     public static final QTermsOfService termsOfService = new QTermsOfService("termsOfService");
 
-    public final BooleanPath isAccepted = createBoolean("isAccepted");
+    public final StringPath termCode = createString("termCode");
 
     public final NumberPath<Long> termsId = createNumber("termsId", Long.class);
+
+    public final StringPath title = createString("title");
 
     public final ListPath<UserAgreement, QUserAgreement> userAgreements = this.<UserAgreement, QUserAgreement>createList("userAgreements", UserAgreement.class, QUserAgreement.class, PathInits.DIRECT2);
 

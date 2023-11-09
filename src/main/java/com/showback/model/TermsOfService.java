@@ -1,6 +1,7 @@
 package com.showback.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,9 +20,11 @@ public class TermsOfService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long termsId;
 
-    private boolean isAccepted;
+    private String termCode;
+    private String title;
 
     @OneToMany(mappedBy = "termsOfService")
+    @JsonBackReference
     private List<UserAgreement> userAgreements = new ArrayList<>();
 
 }

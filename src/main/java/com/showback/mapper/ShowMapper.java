@@ -27,11 +27,11 @@ public class ShowMapper {
     @Transactional
     public Show toEntity(ShowDTO showDTO, Venue venue) throws JsonProcessingException {
 
-        if (showDTO == null) {
-            return null;
-        }
 
         String contentDetailJson = objectMapper.writeValueAsString(showDTO.getContentDetail());
+
+        ShowBannerDTO showBanners = showDTO.getShowBanners();
+        ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
 
         Show show = new Show();
         show.setShowId(showDTO.getShowId());
@@ -49,11 +49,6 @@ public class ShowMapper {
                     .collect(Collectors.toList());
             schedules.forEach(schedule -> schedule.setShow(show));
             show.setShowSchedules(schedules);
-        }
-
-        if (showDTO.getShowBanners() != null) {
-            ShowBanner showBanner = showBannerMapper.toEntity(showDTO.getShowBanners());
-            show.setShowBanner(showBanner);
         }
 
         if (venue != null) {
@@ -86,6 +81,7 @@ public class ShowMapper {
                 .price(show.getPrice())
                 .period(show.getPeriod())
                 .venueId(show.getVenue().getVenueId())
+                .venueName(show.getVenue().getVenueName())
                 .showSchedules(show.getShowSchedules().stream()
                         .map(showScheduleMapper::toDTO)
                         .collect(Collectors.toList()))

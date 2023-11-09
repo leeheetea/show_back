@@ -10,5 +10,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByLoginType(int loginType);
     User findByUserAuth_AuthNameAndUserAuth_AuthEmail(String authName, String authEmail);
 
+    User findByLoginTypeAndUsernameIsNull(Integer loginType);
+
 
 }

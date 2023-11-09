@@ -2,7 +2,6 @@ package com.showback.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.showback.dto.ShowBannerDTO;
 import com.showback.dto.ShowDTO;
@@ -17,6 +16,7 @@ import com.showback.repository.ShowRepository;
 import com.showback.repository.ShowScheduleRepository;
 import com.showback.repository.VenueRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +50,22 @@ public class ShowService {
     }
 
     @Transactional
+    public List<ShowDTO> findShowDTOByType(String type, Pageable pageable){
+
+        List<Show> shows = showRepository.findByType(type, pageable);
+
+        return shows.stream()
+                .map(show -> {
+                    try {
+                        return showMapper.toDTO(show);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
     public Show createShow(ShowDTO showDTO) throws JsonProcessingException {
 
         Venue venue = null;
@@ -71,7 +87,16 @@ public class ShowService {
             show.setShowSeats(showSeats);
         }
 
-        return showRepository.save(show);
+        showRepository.save(show);
+
+        ShowBannerDTO showBanners = showDTO.getShowBanners();
+        if(showBanners != null){
+            ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
+            showBanner.setShow(show);
+            showBannerRepository.save(showBanner);
+        }
+
+        return show;
     }
 
     @Transactional
@@ -101,22 +126,32 @@ public class ShowService {
                         .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
                 schedules.add(Schedule);
             } else {
-                schedules.add(showScheduleMapper.toEntity(dto));  // 새로운 ShowSchedule
+                schedules.add(showScheduleMapper.toEntity(dto));
             }
         }
 
-        List<ShowBanner> showBanners = new ArrayList<>();
+        ShowBannerDTO showBanners = showDTO.getShowBanners();
+        ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
 
-//        for (ShowBannerDTO dto : showDTO.getShowBanners()) {
-//            if (dto.getShowId() != null) {
-//                ShowBanner existingBanner = showBannerRepository.findById(dto.getShowId())
-//                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-//                showBanners.add(existingBanner);
-//            } else {
-//                showBanners.add(showBannerMapper.toEntity(dto));
-//            }
-//        }
+        show.setShowBanner(showBanner);
+
         return show.getShowId();
+    }
+
+    @Transactional
+    public List<ShowBannerDTO> findAllShowBanner(Pageable pageable){
+        List<ShowBanner> showBanners = showBannerRepository.findByBannerUrlIsNotNullAndNotEmpty(pageable);
+        return showBanners.stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<ShowBannerDTO> findAllSmallBanner(Pageable pageable){
+        List<ShowBanner> byBannerUrlIsNotNull = showBannerRepository.findBySmallBannerUrlIsNotNullAndNotEmpty(pageable);
+        return byBannerUrlIsNotNull.stream()
+                .map(showBannerMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
 }

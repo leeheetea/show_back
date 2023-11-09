@@ -1,5 +1,6 @@
 package com.showback.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -29,6 +30,7 @@ public class Password {
     private Date updateDate;
 
     @OneToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 

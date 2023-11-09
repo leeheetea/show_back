@@ -1,5 +1,7 @@
 package com.showback.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,9 +21,16 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonBackReference
     private Order order;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    // 변경: @OneToOne에서 @ManyToOne으로 변경합니다.
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "show_seat_id")
+    @JsonBackReference
     private ShowSeat showSeat;
+
+    @Version
+    private Long version;
 }
+

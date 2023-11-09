@@ -1,39 +1,52 @@
 package com.showback.service;
 
-import com.showback.dto.OrderDTO;
-import com.showback.dto.OrderDetailDTO;
+import com.showback.domain.OrderState;
 import com.showback.dto.OrderRequestDTO;
-import com.showback.mapper.OrderDetailMapper;
-import com.showback.mapper.ReservationMapper;
-import com.showback.model.*;
-import com.showback.repository.*;
+import com.showback.model.Order;
+import com.showback.model.OrderDetail;
+import com.showback.model.SelectedSeatsDTO;
+import com.showback.model.UserAuth;
+import com.showback.repository.OrderRepository;
+import com.showback.repository.UserAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderDetailRepository orderDetailRepository;
+    private final OrderRepository orderRepository;
     private final UserAuthRepository userAuthRepository;
-    private final ShowRepository showRepository;
-    private final ReservationRepository reservationRepository;
+    private final OrderDetailService orderDetailService;
 
-    private final OrderDetailMapper orderDetailMapper;
-    private final ReservationMapper reservationMapper;
+    @Transactional(rollbackFor = Exception.class)
+    public Order createOrder(OrderRequestDTO orderRequestDTO) {
 
+        UserAuth userAuth = userAuthRepository.findById(orderRequestDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("UserAuth not found for id: " + orderRequestDTO.getUserId()));
 
-    @Transactional
-    public Order createOrder(OrderRequestDTO orderRequestDTO, Long userId, Long showId) {
+        List<SelectedSeatsDTO> selectedSeats = orderRequestDTO.getSelectedSeats();
 
+        Order order = new Order();
+        order.setTicketAmount(selectedSeats.size());
+        order.setOrderState(OrderState.PENDING);
+        order.setOrderDate(LocalDate.now());
+        order.setUserAuth(userAuth);
 
-        return null;
+        for (SelectedSeatsDTO selectedSeatDTO : selectedSeats) {
+            OrderDetail orderDetail = orderDetailService
+                    .createOrderDetail(selectedSeatDTO.toOrderDetailDTO());
+            order.addOrderDetail(orderDetail);  // 여기서 orderDetail의 order가 설정됩니다.
+        }
+
+        orderRepository.save(order);
+
+        return order;
     }
 }
