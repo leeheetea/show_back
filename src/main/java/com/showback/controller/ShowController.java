@@ -6,6 +6,7 @@ import com.showback.dto.ShowDTO;
 import com.showback.dto.ShowSeatDTO;
 import com.showback.exception.ShowNotFoundException;
 import com.showback.model.Show;
+import com.showback.repository.ShowRepository;
 import com.showback.service.ShowSeatService;
 import com.showback.service.ShowService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class ShowController {
 
     private final ShowService showService;
     private final ShowSeatService showSeatService;
+    private final ShowRepository showRepository;
 
     @PostMapping
     public ResponseEntity<?> createShow(@RequestBody ShowDTO showDTO, BindingResult bindingResult) throws JsonProcessingException {
@@ -50,8 +52,11 @@ public class ShowController {
         Pageable pageable = PageRequest.of(page, size);
 
         List<ShowDTO> showDTOByType = showService.findShowDTOByType(type, pageable);
+        long totalCount = showRepository.countByType(type);
 
-        return ResponseEntity.ok().body(showDTOByType);
+        return ResponseEntity.ok()
+                .header("totalcount", String.valueOf(totalCount))
+                .body(showDTOByType);
     }
 
     @GetMapping("/{showId}")
@@ -66,7 +71,8 @@ public class ShowController {
     }
 
     @PostMapping("/{showId}")
-    public ResponseEntity<?> updateShow(@RequestBody ShowDTO showDTO, @PathVariable("showId") Long showId) throws JsonProcessingException {
+    public ResponseEntity<?> updateShow(@RequestBody ShowDTO showDTO,
+                                        @PathVariable("showId") Long showId) throws JsonProcessingException {
 
         showService.updateShow(showDTO);
         return ResponseEntity.ok().body(showId);

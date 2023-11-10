@@ -19,4 +19,6 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
     List<Show> searchShowsByKeywordAndType(String keyword, String type);
 
     List<Show> findByType(String type, Pageable pageable);
+
+    long countByType(String type);
 }

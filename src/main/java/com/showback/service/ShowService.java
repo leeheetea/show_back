@@ -100,35 +100,36 @@ public class ShowService {
     }
 
     @Transactional
-    public Long updateShow(ShowDTO showDTO) throws JsonProcessingException{
+    public Long updateShow(ShowDTO showDTO) throws JsonProcessingException {
         Show show = showRepository.findById(showDTO.getShowId())
                 .orElseThrow(() -> new ShowNotFoundException(showDTO.getShowId()));
 
         show.setTitle(showDTO.getTitle());
         show.setType(showDTO.getType());
 
+
         String contentDetail = objectMapper.writeValueAsString(showDTO.getContentDetail());
         show.setContentDetail(contentDetail);
         show.setThumbnailUrl(showDTO.getThumbnailUrl());
         show.setPrice(showDTO.getPrice());
         show.setPeriod(showDTO.getPeriod());
+        System.out.println("showDTO.getPeriod() = " + showDTO.getPeriod());
 
-        if(showDTO.getVenueId() != null){
+        if (showDTO.getVenueId() != null) {
             Venue venue = venueRepository.findById(showDTO.getVenueId()).orElseThrow(EntityNotFoundException::new);
             show.setVenue(venue);
         }
 
-        List<ShowSchedule> schedules = new ArrayList<>();
-
-        for (ShowScheduleDTO dto : showDTO.getShowSchedules()) {
-            if (dto.getShowId() != null) {
-                ShowSchedule Schedule = showScheduleRepository.findById(dto.getShowId())
-                        .orElseThrow(() -> new ShowNotFoundException(dto.getShowId()));
-                schedules.add(Schedule);
-            } else {
-                schedules.add(showScheduleMapper.toEntity(dto));
-            }
+        List<ShowScheduleDTO> showSchedulesDTO = showDTO.getShowSchedules();
+        List<ShowSchedule> newSchedules = new ArrayList<>();
+        for (ShowScheduleDTO scheduleDTO : showSchedulesDTO) {
+            ShowSchedule newSchedule = new ShowSchedule();
+            newSchedule.setScheduleId(scheduleDTO.getScheduleId());
+            newSchedule.setScheduleDate(scheduleDTO.getScheduleDate());
+            newSchedule.setScheduleTime(scheduleDTO.getScheduleTime());
+            newSchedules.add(newSchedule);
         }
+        show.setShowSchedules(newSchedules);
 
         ShowBannerDTO showBanners = showDTO.getShowBanners();
         ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
@@ -137,6 +138,7 @@ public class ShowService {
 
         return show.getShowId();
     }
+
 
     @Transactional
     public List<ShowDTO> searchShows(String keyword, List<String> types) throws JsonProcessingException {

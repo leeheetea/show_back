@@ -44,15 +44,15 @@ public class Show {
     @JsonManagedReference
     private List<Reservation> reservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "show")
     @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "show")
     private List<ShowSchedule> showSchedules = new ArrayList<>();
 
-    @OneToOne(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "show")
     @JsonManagedReference
     private ShowBanner showBanner;
 }

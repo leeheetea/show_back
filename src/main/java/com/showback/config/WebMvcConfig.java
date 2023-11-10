@@ -12,10 +12,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         final int MAX_AGE_SECS = 3600;
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000") // 허용 주소
-                .allowedMethods("GET","POST","PATCH","PUT","DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
+                .exposedHeaders("totalcount") // 노출할 헤더 추가
                 .allowCredentials(true)
                 .maxAge(MAX_AGE_SECS);
-        ;
     }
+
 }

@@ -15,9 +15,7 @@ public class ShowBannerMapper {
     private final ShowRepository showRepository;
 
     public ShowBanner toEntity(ShowBannerDTO dto) {
-        if (dto == null) {
-            return null;
-        }
+
         ShowBanner showBanner = new ShowBanner();
         showBanner.setShowBannerId(dto.getShowBannerId());
         showBanner.setBannerUrl(dto.getBannerUrl());
