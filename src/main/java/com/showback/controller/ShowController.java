@@ -111,4 +111,13 @@ public class ShowController {
 
         return ResponseEntity.ok().body(allShowBanner);
     }
+
+    @DeleteMapping("/{showId}")
+    public ResponseEntity<?> deleteShow(@PathVariable Long showId){
+
+        Show show = showRepository.findById(showId).orElseThrow(() -> new ShowNotFoundException(showId));
+        showRepository.delete(show);
+
+        return ResponseEntity.ok().body(showId + "번 공연이 삭제되었습니다.");
+    }
 }

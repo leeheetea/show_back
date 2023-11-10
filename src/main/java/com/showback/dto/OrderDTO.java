@@ -1,7 +1,9 @@
 package com.showback.dto;
 
+import com.showback.domain.OrderState;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -12,9 +14,9 @@ public class OrderDTO {
 
     private int ticketAmount;
 
-    private String orderState;
+    private OrderState orderState;
 
-    private Date orderDate;
+    private LocalDate orderDate;
 
     private Long userAuthId;
 

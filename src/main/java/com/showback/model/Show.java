@@ -49,10 +49,10 @@ public class Show {
     private List<Review> reviews = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "show")
+    @OneToMany(mappedBy = "show", cascade = CascadeType.REMOVE)
     private List<ShowSchedule> showSchedules = new ArrayList<>();
 
-    @OneToOne(mappedBy = "show")
+    @OneToOne(mappedBy = "show", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private ShowBanner showBanner;
 }
