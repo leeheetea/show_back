@@ -26,11 +26,13 @@ public class QReview extends EntityPathBase<Review> {
 
     public final NumberPath<Long> reviewId = createNumber("reviewId", Long.class);
 
-    public final StringPath reviewImgUrl = createString("reviewImgUrl");
-
     public final StringPath reviewText = createString("reviewText");
 
+    public final DateTimePath<java.time.LocalDateTime> reviewTimestamp = createDateTime("reviewTimestamp", java.time.LocalDateTime.class);
+
     public final QShow show;
+
+    public final QUserAuth userAuth;
 
     public QReview(String variable) {
         this(Review.class, forVariable(variable), INITS);
@@ -51,6 +53,7 @@ public class QReview extends EntityPathBase<Review> {
     public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.show = inits.isInitialized("show") ? new QShow(forProperty("show"), inits.get("show")) : null;
+        this.userAuth = inits.isInitialized("userAuth") ? new QUserAuth(forProperty("userAuth"), inits.get("userAuth")) : null;
     }
 
 }

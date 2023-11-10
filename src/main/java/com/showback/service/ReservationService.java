@@ -1,16 +1,19 @@
 package com.showback.service;
 
-import com.showback.model.Order;
-import com.showback.model.OrderDetail;
-import com.showback.model.Reservation;
-import com.showback.model.Show;
+import com.showback.dto.ReservationResponseDTO;
+import com.showback.dto.SeatDTO;
+import com.showback.mapper.SeatMapper;
+import com.showback.model.*;
+import com.showback.repository.OrderRepository;
 import com.showback.repository.ReservationRepository;
 import com.showback.repository.ShowRepository;
+import com.showback.repository.UserAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,11 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ShowRepository showRepository;
+    private final OrderRepository orderRepository;
+
+    private final UserAuthRepository userAuthRepository;
+
+    private final SeatMapper seatMapper;
 
     public void createReservation(Order order, Long showId){
 
@@ -46,5 +54,36 @@ public class ReservationService {
         order.setReservation(reservation);
 
         reservationRepository.save(reservation);
+    }
+
+    public ReservationResponseDTO findReservation(Long userId) {
+
+        UserAuth userAuth = null;
+        try {
+            userAuth = userAuthRepository.findByUserId(userId);
+        } catch (Exception e) {
+            throw new EntityNotFoundException("사용자를 찾을 수 없습니다");
+        }
+
+        Order order = orderRepository.findByUserAuth(userAuth);
+        List<Seat> seats = order.getOrderDetails().stream()
+                .map(orderDetail -> orderDetail.getShowSeat().getSeat())
+                .collect(Collectors.toList());
+
+        List<SeatDTO> seatDTOS = seats.stream().map(seatMapper::toDTO)
+                .collect(Collectors.toList());
+
+        Reservation reservation = reservationRepository.findByOrder(order);
+
+        ReservationResponseDTO reservationResponseDTO = new ReservationResponseDTO();
+        reservationResponseDTO.setReservationId(reservation.getReservationId());
+        reservationResponseDTO.setUserName(userAuth.getAuthName());
+        reservationResponseDTO.setVenueName(reservation.getShowVenue());
+        reservationResponseDTO.setShowImgUrl(reservation.getShow().getThumbnailUrl());
+        reservationResponseDTO.setSeat(seatDTOS);
+        reservationResponseDTO.setOrderState(order.getOrderState());
+
+        return reservationResponseDTO;
+
     }
 }
