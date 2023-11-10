@@ -1,7 +1,9 @@
 package com.showback.service;
 
 import com.showback.domain.OrderState;
+import com.showback.dto.OrderDTO;
 import com.showback.dto.OrderRequestDTO;
+import com.showback.mapper.OrderMapper;
 import com.showback.model.Order;
 import com.showback.model.OrderDetail;
 import com.showback.model.SelectedSeatsDTO;
@@ -14,8 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserAuthRepository userAuthRepository;
     private final OrderDetailService orderDetailService;
+    private final OrderMapper orderMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public Order createOrder(OrderRequestDTO orderRequestDTO) {
@@ -39,14 +44,29 @@ public class OrderService {
         order.setOrderDate(LocalDate.now());
         order.setUserAuth(userAuth);
 
+        List<OrderDetail> orderDetails = new ArrayList<>();
         for (SelectedSeatsDTO selectedSeatDTO : selectedSeats) {
             OrderDetail orderDetail = orderDetailService
                     .createOrderDetail(selectedSeatDTO.toOrderDetailDTO());
-            order.addOrderDetail(orderDetail);  // 여기서 orderDetail의 order가 설정됩니다.
+            order.addOrderDetail(orderDetail);
+            orderDetails.add(orderDetail);
         }
+        order.setOrderDetails(orderDetails);
 
         orderRepository.save(order);
 
         return order;
+    }
+
+    @Transactional
+    public List<OrderDTO> findByOrder(Long userId){
+
+        UserAuth userAuth = userAuthRepository.findByUserId(userId);
+        List<Order> orderList = orderRepository.findAllByUserAuth(userAuth);
+
+        return orderList.stream()
+                .map(orderMapper::toDTO)
+                .collect(Collectors.toList());
+
     }
 }

@@ -107,7 +107,6 @@ public class ShowService {
         show.setTitle(showDTO.getTitle());
         show.setType(showDTO.getType());
 
-
         String contentDetail = objectMapper.writeValueAsString(showDTO.getContentDetail());
         show.setContentDetail(contentDetail);
         show.setThumbnailUrl(showDTO.getThumbnailUrl());

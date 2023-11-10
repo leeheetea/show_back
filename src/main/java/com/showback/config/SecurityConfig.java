@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests().antMatchers("/", "/user/**","/auth/**","/review", "/review/**","/search").permitAll()
+                .authorizeRequests().antMatchers("/", "/user/**","/auth/**","/review", "/review/**","/search", "/order").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter, CorsFilter.class);
