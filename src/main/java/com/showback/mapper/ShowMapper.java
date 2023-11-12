@@ -27,11 +27,9 @@ public class ShowMapper {
     @Transactional
     public Show toEntity(ShowDTO showDTO, Venue venue) throws JsonProcessingException {
 
-
         String contentDetailJson = objectMapper.writeValueAsString(showDTO.getContentDetail());
 
         ShowBannerDTO showBanners = showDTO.getShowBanners();
-        ShowBanner showBanner = showBannerMapper.toEntity(showBanners);
 
         Show show = new Show();
         show.setShowId(showDTO.getShowId());
@@ -42,8 +40,10 @@ public class ShowMapper {
         show.setPeriod(showDTO.getPeriod());
         show.setPrice(showDTO.getPrice());
 
-        if (showDTO.getShowSchedules() != null) {
+        System.out.println(">>>>>" + showDTO.getShowSchedules());
 
+
+        if (showDTO.getShowSchedules() != null) {
             List<ShowSchedule> schedules = showDTO.getShowSchedules().stream()
                     .map(showScheduleMapper::toEntity)
                     .collect(Collectors.toList());

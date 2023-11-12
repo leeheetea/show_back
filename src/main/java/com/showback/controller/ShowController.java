@@ -40,7 +40,6 @@ public class ShowController {
         }
 
         Show show = showService.createShow(showDTO);
-
         return ResponseEntity.ok().body(show);
     }
 
