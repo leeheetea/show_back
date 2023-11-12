@@ -9,6 +9,7 @@ import com.showback.model.Show;
 import com.showback.model.ShowBanner;
 import com.showback.model.ShowSchedule;
 import com.showback.model.Venue;
+import com.showback.repository.ShowScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class ShowMapper {
     private final ShowScheduleMapper showScheduleMapper;
     private final ShowBannerMapper showBannerMapper;
     private final ObjectMapper objectMapper;
+    private final ShowScheduleRepository showScheduleRepository;
 
     @Transactional
     public Show toEntity(ShowDTO showDTO, Venue venue) throws JsonProcessingException {
@@ -40,14 +42,14 @@ public class ShowMapper {
         show.setPeriod(showDTO.getPeriod());
         show.setPrice(showDTO.getPrice());
 
-        System.out.println(">>>>>" + showDTO.getShowSchedules());
-
-
         if (showDTO.getShowSchedules() != null) {
             List<ShowSchedule> schedules = showDTO.getShowSchedules().stream()
                     .map(showScheduleMapper::toEntity)
                     .collect(Collectors.toList());
-            schedules.forEach(schedule -> schedule.setShow(show));
+            schedules.forEach(schedule -> {
+                schedule.setShow(show);
+                showScheduleRepository.save(schedule);
+            });
             show.setShowSchedules(schedules);
         }
 
