@@ -56,7 +56,7 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    public ReservationResponseDTO findReservation(Long userId) {
+    public ReservationResponseDTO findReservation(Long userId, Long orderId) {
 
         UserAuth userAuth = null;
         try {
@@ -65,7 +65,7 @@ public class ReservationService {
             throw new EntityNotFoundException("사용자를 찾을 수 없습니다");
         }
 
-        Order order = orderRepository.findByUserAuth(userAuth);
+        Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
         List<Seat> seats = order.getOrderDetails().stream()
                 .map(orderDetail -> orderDetail.getShowSeat().getSeat())
                 .collect(Collectors.toList());

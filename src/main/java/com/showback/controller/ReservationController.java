@@ -44,13 +44,15 @@ public class ReservationController {
 
     @GetMapping
     public ResponseEntity<?> getReservation(
-            HttpServletRequest request){
+            HttpServletRequest request,
+            @RequestParam(name = "orderId") Long orderId)
+            {
 
         String token = request.getHeader("Authorization").replace("Bearer ", "");
         String userIdStr = tokenProvider.validateAndGetUserId(token);
         Long userId = Long.parseLong(userIdStr);
 
-        ReservationResponseDTO reservation = reservationService.findReservation(userId);
+        ReservationResponseDTO reservation = reservationService.findReservation(userId, orderId);
 
         return ResponseEntity.ok().body(reservation);
     }
