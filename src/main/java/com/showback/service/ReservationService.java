@@ -24,7 +24,6 @@ public class ReservationService {
     private final OrderRepository orderRepository;
 
     private final UserAuthRepository userAuthRepository;
-
     private final SeatMapper seatMapper;
 
     public void createReservation(Order order, Long showId){
@@ -52,7 +51,6 @@ public class ReservationService {
                 .build();
 
         order.setReservation(reservation);
-
         reservationRepository.save(reservation);
     }
 
@@ -82,8 +80,8 @@ public class ReservationService {
         reservationResponseDTO.setShowImgUrl(reservation.getShow().getThumbnailUrl());
         reservationResponseDTO.setSeat(seatDTOS);
         reservationResponseDTO.setOrderState(order.getOrderState());
+        reservationResponseDTO.setShowDate(order.getOrderDate());
 
         return reservationResponseDTO;
-
     }
 }

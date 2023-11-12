@@ -28,7 +28,6 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<?> createReservation(
             @RequestBody OrderRequestDTO orderRequestDTO){
-
         try {
             Order order = orderService.createOrder(orderRequestDTO);
             reservationService.createReservation(order, orderRequestDTO.getShowId());

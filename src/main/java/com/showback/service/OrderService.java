@@ -41,7 +41,7 @@ public class OrderService {
         Order order = new Order();
         order.setTicketAmount(selectedSeats.size());
         order.setOrderState(OrderState.PENDING);
-        order.setOrderDate(LocalDate.now());
+        order.setOrderDate(orderRequestDTO.getDate());
         order.setUserAuth(userAuth);
 
         List<OrderDetail> orderDetails = new ArrayList<>();

@@ -3,6 +3,7 @@ package com.showback.dto;
 import com.showback.domain.OrderState;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -14,5 +15,6 @@ public class ReservationResponseDTO {
     List<SeatDTO> seat;
     String showImgUrl;
     OrderState orderState;
+    LocalDate showDate;
 
 }
